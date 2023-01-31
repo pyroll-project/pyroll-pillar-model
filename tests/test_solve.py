@@ -7,7 +7,7 @@ from pyroll.core import Profile, PassSequence, RollPass, Roll, CircularOvalGroov
 def test_solve(tmp_path: Path, caplog):
     caplog.set_level(logging.DEBUG, logger="pyroll")
 
-    import pyroll.sample_plugin
+    import pyroll.pillar_model
 
     in_profile = Profile.round(
         diameter=30e-3,
@@ -57,6 +57,3 @@ def test_solve(tmp_path: Path, caplog):
     finally:
         print("\nLog:")
         print(caplog.text)
-
-    assert sequence.in_profile.new_hook == 42
-    assert sequence.out_profile.new_hook == 42
