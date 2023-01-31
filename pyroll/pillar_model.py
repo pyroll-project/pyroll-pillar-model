@@ -1,3 +1,4 @@
+import math
 import numpy as np
 import shapely
 
@@ -18,6 +19,12 @@ class PillarProfile(Profile):
 
     pillar_heights = Hook[np.ndarray]()
     """Array of the pillars' heights."""
+
+    pillar_boundary_heights = Hook[np.ndarray]()
+    """Array of the pillar boundaries' heights."""
+
+    pillar_sections = Hook[np.ndarray]()
+    """Array of the pillar section areas (Polygon geometry objects)."""
 
 
 @PillarProfile.pillars
@@ -45,3 +52,32 @@ def pillar_heights(self: PillarProfile):
             for p in self.pillars
         ]
     )
+
+
+@PillarProfile.pillar_boundary_heights
+def pillar_heights(self: PillarProfile):
+    return np.array(
+        [
+            shapely.intersection(
+                self.cross_section,
+                shapely.LineString([(p, self.cross_section.bounds[1]), (p, self.cross_section.bounds[3])])
+            ).length
+            for p in self.pillar_boundaries
+        ]
+    )
+
+
+@PillarProfile.pillar_sections
+def pillar_sections(self: PillarProfile):
+    a = np.zeros(len(self.pillars), dtype=object)
+
+    for i in range(0, len(a)):
+        a[i] = shapely.clip_by_rect(
+            self.cross_section,
+            self.pillar_boundaries[i],
+            -math.inf,
+            self.pillar_boundaries[i + 1],
+            math.inf
+        )
+
+    return a
