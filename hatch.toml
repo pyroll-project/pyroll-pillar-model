@@ -7,12 +7,13 @@ packages = [
 allow-direct-references = true
 
 [version]
-path = "pyroll/pillar_model/__init__.py"
+path = "pyroll/pillar_model.py"
 
 [envs.default]
 path = ".venv"
 dependencies = [
     "pytest ~= 7.0",
+    "matplotlib ~= 3.6"
 ]
 
 [envs.docs]
