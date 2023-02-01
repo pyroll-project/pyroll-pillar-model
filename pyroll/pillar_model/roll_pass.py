@@ -2,6 +2,10 @@ import numpy as np
 import shapely
 from pyroll.core import RollPass, Hook
 
+import pyroll.core
+
+pyroll.core.root_hooks.add(pyroll.core.RollPass.DiskElement.OutProfile.pillars)
+
 
 @RollPass.DiskElement.extension_class
 class PillarDiskElement(RollPass.DiskElement):
@@ -59,6 +63,9 @@ def out_pillar_boundaries(self: PillarDiskElement.OutProfile):
 
 @PillarDiskElement.OutProfile.pillars
 def out_pillars(self: PillarDiskElement.OutProfile):
+    if not self.has_set_or_cached("pillars"):
+        return self.disk_element.in_profile.pillars
+
     a = np.zeros(len(self.pillar_boundaries) - 1)
     a[1:] = (self.pillar_boundaries[2:] + self.pillar_boundaries[1:-1]) / 2
     return a
