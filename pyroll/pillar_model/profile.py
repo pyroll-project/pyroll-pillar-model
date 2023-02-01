@@ -2,11 +2,7 @@ import math
 import numpy as np
 import shapely
 
-VERSION = "2.0.0b1"
-
 from pyroll.core import Profile, Hook
-
-PILLAR_COUNT = 11
 
 
 @Profile.extension_class
@@ -29,6 +25,7 @@ class PillarProfile(Profile):
 
 @PillarProfile.pillars
 def pillars(self: PillarProfile):
+    from . import PILLAR_COUNT
     dw = self.width / 2 / (PILLAR_COUNT - 0.5)
     return np.arange(0, self.width / 2, dw)
 

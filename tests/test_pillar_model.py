@@ -3,11 +3,10 @@ from typing import Union
 import matplotlib.pyplot as plt
 import numpy as np
 import pytest
-import shapely
 from pyroll.core import Profile
 
 import pyroll.pillar_model
-from pyroll.pillar_model import PillarProfile
+from pyroll.pillar_model.profile import PillarProfile
 
 pyroll.pillar_model.PILLAR_COUNT = 4
 

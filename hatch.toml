@@ -7,7 +7,7 @@ packages = [
 allow-direct-references = true
 
 [version]
-path = "pyroll/pillar_model.py"
+path = "pyroll/pillar_model/config.py"
 
 [envs.default]
 path = ".venv"
