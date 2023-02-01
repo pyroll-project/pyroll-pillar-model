@@ -44,25 +44,24 @@ def pillar_spreads(self: PillarDiskElement):
     return np.ones_like(self.in_profile.pillars)
 
 
+@PillarDiskElement.OutProfile.pillar_widths
+def out_pillar_widths(self: PillarDiskElement.OutProfile):
+    de = self.disk_element
+    return de.in_profile.pillar_widths * de.pillar_spreads
+
+
+@PillarDiskElement.OutProfile.pillar_boundaries
+def out_pillar_boundaries(self: PillarDiskElement.OutProfile):
+    a = np.zeros(len(self.pillar_widths) + 1)
+    a[1:] = np.cumsum(self.pillar_widths)
+    return a
+
+
 @PillarDiskElement.OutProfile.pillars
 def out_pillars(self: PillarDiskElement.OutProfile):
-    de = self.disk_element
-    rp = de.roll_pass
-
-    if not self.has_set_or_cached("pillars"):
-        return de.in_profile.pillars
-
-    pillars = de.in_profile.pillars
-    boundaries = de.in_profile.pillar_boundaries
-
-    widths = boundaries[1:] - boundaries[:-1]
-    new_widths = widths * de.pillar_spreads
-
-    new_pillars = np.zeros_like(pillars)
-    for i in range(1, len(pillars)):
-        new_pillars[i] = np.sum(new_widths[:i]) + new_widths[i] / 2
-
-    return new_pillars
+    a = np.zeros(len(self.pillar_boundaries) - 1)
+    a[1:] = (self.pillar_boundaries[2:] + self.pillar_boundaries[1:-1]) / 2
+    return a
 
 
 @PillarDiskElement.OutProfile.cross_section
@@ -74,7 +73,7 @@ def out_cross_section(self: PillarDiskElement.OutProfile):
     coords3 *= -1
     coords4 = coords2[:-1].copy()
     coords4 *= -1
-    outer = self.pillars[-1] + (self.pillars[-1] - self.pillars[-2]) / 2
+    outer = self.pillar_boundaries[-1]
     return shapely.Polygon(
         np.row_stack([
             coords1,
@@ -88,12 +87,12 @@ def out_cross_section(self: PillarDiskElement.OutProfile):
 
 
 @RollPass.OutProfile.cross_section
-def out_cross_section(self: RollPass.OutProfile):
+def rp_out_cross_section(self: RollPass.OutProfile):
     if self.roll_pass.disk_elements:
         return self.roll_pass.disk_elements[-1].out_profile.cross_section
 
 
 @RollPass.OutProfile.width
-def out_width(self: RollPass.OutProfile):
+def rp_out_width(self: RollPass.OutProfile):
     if self.roll_pass.disk_elements:
         return self.cross_section.width
