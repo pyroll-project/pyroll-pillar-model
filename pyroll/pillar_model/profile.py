@@ -16,6 +16,9 @@ class PillarProfile(Profile):
     pillar_heights = Hook[np.ndarray]()
     """Array of the pillars' heights."""
 
+    pillar_widths = Hook[np.ndarray]()
+    """Array of the pillars' widths."""
+
     pillar_boundary_heights = Hook[np.ndarray]()
     """Array of the pillar boundaries' heights."""
 
@@ -49,6 +52,11 @@ def pillar_heights(self: PillarProfile):
             for p in self.pillars
         ]
     )
+
+
+@PillarProfile.pillar_widths
+def pillar_widths(self: PillarProfile):
+    return self.pillar_boundaries[1:] - self.pillar_boundaries[:-1]
 
 
 @PillarProfile.pillar_boundary_heights
