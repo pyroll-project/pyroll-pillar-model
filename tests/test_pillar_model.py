@@ -55,7 +55,7 @@ def test_pillar_boundary_heights_square():
         Profile.diamond(height=5, width=10, corner_radius=1)
     ]
 )
-def test_ring_sections(p: Union[PillarProfile, Profile]):
+def test_pillar_sections(p: Union[PillarProfile, Profile]):
     fig: plt.Figure = plt.figure()
     ax: plt.Axes = fig.subplots()
 

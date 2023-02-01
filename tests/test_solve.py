@@ -1,13 +1,13 @@
 import logging
+import webbrowser
 from pathlib import Path
 
 from pyroll.core import Profile, PassSequence, RollPass, Roll, CircularOvalGroove, Transport, RoundGroove
 
+DISK_ELEMENT_COUNT = 4
 
 def test_solve(tmp_path: Path, caplog):
     caplog.set_level(logging.DEBUG, logger="pyroll")
-
-    import pyroll.pillar_model
 
     in_profile = Profile.round(
         diameter=30e-3,
@@ -32,6 +32,7 @@ def test_solve(tmp_path: Path, caplog):
                 rotational_frequency=1
             ),
             gap=2e-3,
+            disk_element_count=DISK_ELEMENT_COUNT,
         ),
         Transport(
             label="I => II",
@@ -49,6 +50,7 @@ def test_solve(tmp_path: Path, caplog):
                 rotational_frequency=1
             ),
             gap=2e-3,
+            disk_element_count=DISK_ELEMENT_COUNT,
         ),
     ])
 
@@ -57,3 +59,14 @@ def test_solve(tmp_path: Path, caplog):
     finally:
         print("\nLog:")
         print(caplog.text)
+
+    try:
+        import pyroll.report
+
+        report = pyroll.report.report(sequence)
+        f = tmp_path / "report.html"
+        f.write_text(report)
+        webbrowser.open(f.as_uri())
+
+    except ImportError:
+        pass
