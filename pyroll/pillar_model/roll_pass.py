@@ -18,12 +18,18 @@ class PillarDiskElement(RollPass.DiskElement):
     pillar_draughts = Hook[np.ndarray]()
     """Array of draught values for each pillar."""
 
+    pillar_elongations = Hook[np.ndarray]()
+    """Array of elongation values for each pillar."""
+
 
 @PillarDiskElement.pillars_in_contact
 def pillars_in_contact(self: PillarDiskElement):
     rp = self.roll_pass
-    contour = rp.roll.surface_interpolation(self.out_profile.x, self.in_profile.pillars).squeeze()
-    return self.in_profile.pillar_heights / 2 > contour + rp.gap / 2
+    contour = rp.roll.surface_interpolation(self.out_profile.x, self.out_profile.pillars).squeeze()
+    contacts = self.in_profile.pillar_heights / 2 > contour + rp.gap / 2
+    if not np.any(contacts):
+        raise RuntimeError("No pillars in contact with rolls.")
+    return contacts
 
 
 @PillarDiskElement.OutProfile.pillar_heights
@@ -46,6 +52,11 @@ def pillar_draughts(self: PillarDiskElement):
 @PillarDiskElement.pillar_spreads
 def pillar_spreads(self: PillarDiskElement):
     return np.ones_like(self.in_profile.pillars)
+
+
+@PillarDiskElement.pillar_elongations
+def pillar_elongations(self: PillarDiskElement):
+    return 1 / (self.pillar_draughts * self.pillar_spreads)
 
 
 @PillarDiskElement.OutProfile.pillar_widths
@@ -82,14 +93,16 @@ def out_cross_section(self: PillarDiskElement.OutProfile):
     coords4 *= -1
     outer = self.pillar_boundaries[-1]
     return shapely.Polygon(
-        np.row_stack([
-            coords1,
-            [(outer, 0)],
-            coords2,
-            coords3,
-            [(-outer, 0)],
-            coords4,
-        ])
+        np.row_stack(
+            [
+                coords1,
+                [(outer, 0)],
+                coords2,
+                coords3,
+                [(-outer, 0)],
+                coords4,
+            ]
+        )
     )
 
 

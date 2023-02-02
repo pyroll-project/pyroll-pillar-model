@@ -16,7 +16,7 @@ pyroll.pillar_model.PILLAR_COUNT = 5
 @RollPass.DiskElement.pillar_spreads
 def pillar_spreads(self: RollPass.DiskElement):
     a = np.ones_like(self.in_profile.pillars)
-    a[self.pillars_in_contact] *= 1.3
+    a[self.pillars_in_contact] *= 1.5
     return a
 
 
