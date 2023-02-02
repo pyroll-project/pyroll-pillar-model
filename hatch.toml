@@ -20,11 +20,13 @@ dependencies = [
 [envs.docs]
 path = ""
 dependencies = [
-    "pygments ~= 2.0"
+    "pygments ~= 2.0",
+    "pytask",
+    "matplotlib"
 ]
 
 [envs.docs.scripts]
-build = "latexmk --cd --pdf --shell-escape docs/docs" # compile LaTeX docs with latexmk
+build = "python -m pytask" # compile LaTeX docs with latexmk
 
 [envs.test]
 path = ""
