@@ -27,8 +27,6 @@ def pillars_in_contact(self: PillarDiskElement):
     rp = self.roll_pass
     contour = rp.roll.surface_interpolation(self.out_profile.x, self.out_profile.pillars).squeeze()
     contacts = self.in_profile.pillar_heights / 2 > contour + rp.gap / 2
-    if not np.any(contacts):
-        raise RuntimeError("No pillars in contact with rolls.")
     return contacts
 
 
