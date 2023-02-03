@@ -114,3 +114,18 @@ def rp_out_cross_section(self: RollPass.OutProfile):
 def rp_out_width(self: RollPass.OutProfile):
     if self.roll_pass.disk_elements:
         return self.cross_section.width
+
+
+@RollPass.DiskElement.contact_area
+def disk_contact_area(self: RollPass.DiskElement):
+    contact_width = (
+            np.sum(self.in_profile.pillar_widths[self.pillars_in_contact])
+            + np.sum(self.out_profile.pillar_widths[self.pillars_in_contact])
+    )
+    return contact_width * self.length
+
+
+@RollPass.Roll.contact_area
+def roll_contact_area(self: RollPass.Roll):
+    rp = self.roll_pass
+    return sum(de.contact_area for de in rp.disk_elements)

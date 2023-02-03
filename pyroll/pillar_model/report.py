@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+import numpy as np
 from pyroll.core import Unit, RollPass
 from pyroll.report import hookimpl
 import matplotlib.animation as mpl_ani
@@ -64,3 +65,34 @@ def roll_pass_pillar_animation(unit: Unit):
         animation = mpl_ani.ArtistAnimation(fig, arts, interval=5e3 / len(rp.disk_elements))
 
         return animation.to_html5_video()
+
+
+@hookimpl(specname="unit_plot")
+def roll_pass_contact_area(unit: Unit):
+    if isinstance(unit, RollPass):
+        rp: RollPass = unit
+
+        fig: plt.Figure = plt.figure()
+        ax: plt.Axes = fig.add_subplot()
+        ax.set_aspect("equal")
+        ax.grid(True)
+        ax.set_title("Contact Area")
+        ax.set_xlabel("$z$")
+        ax.set_ylabel("$x$")
+        ax.invert_yaxis()
+
+        for de in rp.disk_elements:
+            for i in range(len(de.in_profile.pillars)):
+                if not de.pillars_in_contact[i]:
+                    continue
+                x = [de.in_profile.x] * 2 + [de.out_profile.x] * 2
+                z = np.array([
+                    de.in_profile.pillar_boundaries[i + 1],
+                    de.in_profile.pillar_boundaries[i],
+                    de.out_profile.pillar_boundaries[i],
+                    de.out_profile.pillar_boundaries[i + 1],
+                ])
+                ax.fill(z, x, alpha=0.5, c="C0")
+                ax.fill(-z, x, alpha=0.5, c="C0")
+
+        return fig
