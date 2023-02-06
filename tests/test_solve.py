@@ -2,15 +2,28 @@ import logging
 import webbrowser
 from pathlib import Path
 
+import numpy as np
+import pyroll.pillar_model
 from pyroll.core import Profile, PassSequence, RollPass, Roll, CircularOvalGroove, Transport, RoundGroove
 
-DISK_ELEMENT_COUNT = 4
+DISK_ELEMENT_COUNT = 30
+
+
+def pillar_spreads(self: RollPass.DiskElement):
+    a = np.ones_like(self.in_profile.pillars)
+    a[self.pillars_in_contact] *= 1.015
+    return a
+
 
 def test_solve(tmp_path: Path, caplog):
     caplog.set_level(logging.DEBUG, logger="pyroll")
 
-    in_profile = Profile.round(
-        diameter=30e-3,
+    pyroll.pillar_model.PILLAR_COUNT = 30
+
+    hf = RollPass.DiskElement.pillar_spreads.add_function(pillar_spreads)
+
+    in_profile = Profile.square(
+        side=24e-3,
         temperature=1200 + 273.15,
         strain=0,
         material=["C45", "steel"],
@@ -19,51 +32,55 @@ def test_solve(tmp_path: Path, caplog):
         thermal_capacity=690,
     )
 
-    sequence = PassSequence([
-        RollPass(
-            label="Oval I",
-            roll=Roll(
-                groove=CircularOvalGroove(
-                    depth=8e-3,
-                    r1=6e-3,
-                    r2=40e-3
+    sequence = PassSequence(
+        [
+            RollPass(
+                label="Oval I",
+                roll=Roll(
+                    groove=CircularOvalGroove(
+                        depth=8e-3,
+                        r1=6e-3,
+                        r2=40e-3
+                    ),
+                    nominal_radius=160e-3,
+                    rotational_frequency=1,
+                    contact_length=37e-3,
                 ),
-                nominal_radius=160e-3,
-                rotational_frequency=1
+                gap=2e-3,
+                disk_element_count=DISK_ELEMENT_COUNT,
             ),
-            gap=2e-3,
-            disk_element_count=DISK_ELEMENT_COUNT,
-        ),
-        Transport(
-            label="I => II",
-            duration=1
-        ),
-        RollPass(
-            label="Round II",
-            roll=Roll(
-                groove=RoundGroove(
-                    r1=1e-3,
-                    r2=12.5e-3,
-                    depth=11.5e-3
+            Transport(
+                label="I => II",
+                duration=1
+            ),
+            RollPass(
+                label="Round II",
+                roll=Roll(
+                    groove=RoundGroove(
+                        r1=1e-3,
+                        r2=12.5e-3,
+                        depth=11.5e-3
+                    ),
+                    nominal_radius=160e-3,
+                    rotational_frequency=1
                 ),
-                nominal_radius=160e-3,
-                rotational_frequency=1
+                gap=2e-3,
+                disk_element_count=DISK_ELEMENT_COUNT,
             ),
-            gap=2e-3,
-            disk_element_count=DISK_ELEMENT_COUNT,
-        ),
-    ])
+        ]
+    )
 
     try:
         sequence.solve(in_profile)
     finally:
         print("\nLog:")
         print(caplog.text)
+        RollPass.DiskElement.pillar_spreads.remove_function(hf)
 
     try:
-        import pyroll.report
+        from pyroll.report import report
 
-        report = pyroll.report.report(sequence)
+        report = report(sequence)
         f = tmp_path / "report.html"
         f.write_text(report)
         webbrowser.open(f.as_uri())
