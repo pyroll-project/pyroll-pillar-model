@@ -35,7 +35,7 @@ def disk_element_pillar_plot(unit: Unit):
 
 @hookimpl(specname="unit_plot")
 def roll_pass_pillar_animation(unit: Unit):
-    if isinstance(unit, RollPass):
+    if isinstance(unit, RollPass) and unit.disk_elements:
         rp: RollPass = unit
 
         fig: plt.Figure = plt.figure()
@@ -69,7 +69,7 @@ def roll_pass_pillar_animation(unit: Unit):
 
 @hookimpl(specname="unit_plot")
 def roll_pass_contact_area(unit: Unit):
-    if isinstance(unit, RollPass):
+    if isinstance(unit, RollPass) and unit.disk_elements:
         rp: RollPass = unit
 
         fig: plt.Figure = plt.figure()
