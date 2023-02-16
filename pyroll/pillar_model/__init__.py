@@ -3,7 +3,7 @@ import importlib.util
 from . import profile
 from . import roll_pass
 
-VERSION = "2.0.0b1"
+VERSION = "2.0.0rc0"
 PILLAR_COUNT = 11
 
 REPORT_INSTALLED = bool(importlib.util.find_spec("pyroll.report"))

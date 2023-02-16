@@ -3,6 +3,8 @@ import shapely
 from pyroll.core import RollPass, Hook
 
 import pyroll.core
+from scipy.optimize import root_scalar
+from shapely import intersection, LineString
 
 pyroll.core.root_hooks.add(pyroll.core.RollPass.DiskElement.OutProfile.pillars)
 
@@ -129,3 +131,17 @@ def disk_contact_area(self: RollPass.DiskElement):
 def roll_contact_area(self: RollPass.Roll):
     rp = self.roll_pass
     return sum(de.contact_area for de in rp.disk_elements)
+
+
+@RollPass.Roll.contact_length
+def roll_contact_length(self: RollPass.Roll):
+    rp = self.roll_pass
+
+    def f(x):
+        y = self.surface_interpolation(x, self.surface_z).ravel() + rp.gap / 2
+        ls = LineString(np.column_stack([self.surface_z, y]))
+        i = intersection(rp.in_profile.cross_section, ls)
+        return i.length
+
+    cl = root_scalar(f, bracket=(0, -self.min_radius))
+    return cl
