@@ -3,8 +3,6 @@ import shapely
 from pyroll.core import RollPass, Hook
 
 import pyroll.core
-from scipy.optimize import root_scalar
-from shapely import intersection, LineString
 
 pyroll.core.root_hooks.add(pyroll.core.RollPass.DiskElement.OutProfile.pillars)
 
