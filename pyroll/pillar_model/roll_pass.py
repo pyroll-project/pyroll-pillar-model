@@ -123,12 +123,30 @@ def disk_contact_area(self: RollPass.DiskElement):
     contact_width = (
             np.sum(self.in_profile.pillar_widths[self.pillars_in_contact])
             + np.sum(self.out_profile.pillar_widths[self.pillars_in_contact])
-    )
-    return contact_width * self.length
+    )  # /2 missing since pillars only on half profile
+    return contact_width * self.length * 2  # *2 since two rolls
+
+
+@RollPass.contact_area
+def pass_contact_area(self: RollPass):
+    if self.disk_elements:
+        return np.sum([de.contact_area for de in self.disk_elements])
+
+
+@RollPass.surface_area
+def pass_surface_area(self: RollPass):
+    if self.disk_elements:
+        return np.sum([de.surface_area for de in self.disk_elements])
 
 
 @RollPass.Roll.contact_area
 def roll_contact_area(self: RollPass.Roll):
-    rp = self.roll_pass
-    return sum(de.contact_area for de in rp.disk_elements)
+    return self.roll_pass.contact_area / 2
 
+
+@RollPass.roll_force
+def roll_force_disks(self: RollPass):
+    return np.sum([
+        (de.in_profile.flow_stress + de.out_profile.flow_stress) / 2 * de.contact_area
+        for de in self.disk_elements
+    ]) / 2  # /2 since two rolls

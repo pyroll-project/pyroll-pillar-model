@@ -10,9 +10,7 @@ DISK_ELEMENT_COUNT = 30
 
 
 def pillar_spreads(self: RollPass.DiskElement):
-    a = np.ones_like(self.in_profile.pillars)
-    a[self.pillars_in_contact] *= 1.015
-    return a
+    return self.pillar_draughts ** -0.5
 
 
 def test_solve(tmp_path: Path, caplog):
