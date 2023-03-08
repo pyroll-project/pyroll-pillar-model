@@ -60,7 +60,7 @@ def pillar_widths(self: PillarProfile):
 
 
 @PillarProfile.pillar_boundary_heights
-def pillar_heights(self: PillarProfile):
+def pillar_boundary_heights(self: PillarProfile):
     return np.array(
         [
             shapely.intersection(
