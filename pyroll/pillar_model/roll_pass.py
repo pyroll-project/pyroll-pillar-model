@@ -5,6 +5,8 @@ from pyroll.core import RollPass, Hook
 import pyroll.core
 
 pyroll.core.root_hooks.add(pyroll.core.RollPass.DiskElement.OutProfile.pillars)
+pyroll.core.root_hooks.add(pyroll.core.RollPass.DiskElement.OutProfile.pillar_heights)
+pyroll.core.root_hooks.add(pyroll.core.RollPass.DiskElement.OutProfile.pillar_widths)
 
 
 @RollPass.DiskElement.extension_class
