@@ -96,3 +96,31 @@ def roll_pass_contact_area(unit: Unit):
                 ax.fill(-z, x, alpha=0.5, c="C0")
 
         return fig
+
+
+@hookimpl(specname="unit_plot")
+def roll_pass_spread_distribution(unit: Unit):
+    if isinstance(unit, RollPass) and unit.disk_elements:
+        rp: RollPass = unit
+
+        fig: plt.Figure = plt.figure()
+        ax1: plt.Axes
+        ax2: plt.Axes
+        ax1, ax2 = fig.subplots(2, sharex="all")
+        ax1.grid(True)
+        ax2.grid(True)
+        ax1.set_title("Spread Distribution")
+        ax2.set_xlabel("$x$")
+        ax1.set_ylabel("Local Spread $\\beta$")
+        ax2.set_ylabel("Cumulative Spread $\\Pi\\beta$")
+
+        def _gen():
+            for de in rp.disk_elements:
+                yield de.in_profile.x + 0.5 * de.length, de.out_profile.width / de.in_profile.width
+
+        x, beta = np.array(list(_gen())).T
+        ax1.plot(x, beta)
+        ax2.plot(x, np.cumprod(beta))
+        fig.subplots_adjust(hspace=0)
+
+        return fig

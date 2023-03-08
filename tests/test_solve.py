@@ -10,7 +10,7 @@ DISK_ELEMENT_COUNT = 30
 
 
 def pillar_spreads(self: RollPass.DiskElement):
-    return self.pillar_draughts ** -0.5
+    return self.pillar_draughts ** -0.8
 
 
 def test_solve(tmp_path: Path, caplog):
