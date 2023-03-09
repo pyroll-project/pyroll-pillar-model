@@ -4,7 +4,14 @@ from . import profile
 from . import roll_pass
 
 VERSION = "2.0.0"
-PILLAR_COUNT = 11
+
+from pyroll.core import config as _config
+
+
+@_config("PYROLL_PILLAR_MODEL")
+class Config:
+    PILLAR_COUNT = 30
+
 
 REPORT_INSTALLED = bool(importlib.util.find_spec("pyroll.report"))
 

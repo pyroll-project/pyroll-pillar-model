@@ -28,8 +28,8 @@ class PillarProfile(Profile):
 
 @PillarProfile.pillars
 def pillars(self: PillarProfile):
-    from . import PILLAR_COUNT
-    dw = self.width / 2 / (PILLAR_COUNT - 0.5)
+    from . import Config
+    dw = self.width / 2 / (Config.PILLAR_COUNT - 0.5)
     return np.arange(0, self.width / 2, dw)
 
 
