@@ -18,7 +18,7 @@ dependencies = [
 ]
 
 [envs.docs]
-path = ""
+path = ".docs_venv"
 dependencies = [
     "pygments ~= 2.0",
     "pytask",

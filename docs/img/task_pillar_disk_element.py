@@ -10,14 +10,12 @@ from pyroll.core import Profile, RollPass, Roll, SquareGroove
 import pyroll.pillar_model
 from pyroll.pillar_model.profile import PillarProfile
 
-pyroll.pillar_model.PILLAR_COUNT = 5
+pyroll.pillar_model.Config.PILLAR_COUNT = 5
 
 
 @RollPass.DiskElement.pillar_spreads
 def pillar_spreads(self: RollPass.DiskElement):
-    a = np.ones_like(self.in_profile.pillars)
-    a[self.pillars_in_contact] *= 1.5
-    return a
+    return self.pillar_draughts ** -1.1
 
 
 @pytask.mark.produces([f"pillar_disk_element.{s}" for s in ["png", "svg", "pdf"]])
@@ -26,12 +24,12 @@ def task_pillar_disk_element(produces: dict[Any, Path]):
 
     rp = RollPass(
         roll=Roll(
-            groove=SquareGroove(1, 1, tip_depth=3.5, tip_angle=np.pi / 2),
+            groove=SquareGroove(0.5, 0.5, tip_depth=3.5, tip_angle=90),
             nominal_radius=200,
         ),
         gap=1,
         velocity=1,
-        disk_element_count=3,
+        disk_element_count=2,
     )
 
     rp.solve(p)

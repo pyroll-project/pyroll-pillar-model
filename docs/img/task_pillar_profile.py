@@ -10,7 +10,7 @@ from pyroll.core import Profile
 import pyroll.pillar_model
 from pyroll.pillar_model.profile import PillarProfile
 
-pyroll.pillar_model.PILLAR_COUNT = 5
+pyroll.pillar_model.Config.PILLAR_COUNT = 5
 
 
 @pytask.mark.produces([f"pillar_profile.{s}" for s in ["png", "svg", "pdf"]])
