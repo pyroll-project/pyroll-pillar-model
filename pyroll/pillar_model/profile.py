@@ -1,5 +1,6 @@
 import math
 import numpy as np
+from scipy.optimize import fsolve
 import shapely
 
 from pyroll.core import Profile, Hook
@@ -29,8 +30,38 @@ class PillarProfile(Profile):
 @PillarProfile.pillars
 def pillars(self: PillarProfile):
     from . import Config
-    dw = self.width / 2 / (Config.PILLAR_COUNT - 0.5)
-    return np.arange(0, self.width / 2, dw)
+
+    final_pillar_area = self.cross_section.area / Config.PILLAR_COUNT
+    equidistant_pillar_width = self.width / 2 / (Config.PILLAR_COUNT - 0.5)
+
+    def p_centers(p_widths):
+        return np.arange(0, self.width / 2, p_widths)
+
+    def p_heights(p_widths):
+        return np.array(
+            [
+                shapely.intersection(
+                    self.cross_section,
+                    shapely.LineString([(p, self.cross_section.bounds[1]), (p, self.cross_section.bounds[3])])
+                ).length
+                for p in p_centers(p_widths)
+            ]
+        )
+
+    equidistant_pillar_centers = p_centers(equidistant_pillar_width)
+    equidistant_pillar_widths = np.full((1, Config.PILLAR_COUNT / 2), equidistant_pillar_width)
+
+    def fun(p_widths):
+        eq = np.zeros(0, equidistant_pillar_centers + 1)
+        for i in range(len(eq)):
+            eq[i] = final_pillar_area - (p_widths[i] * p_heights(p_widths[i]))
+        eq[:-1] = np.sum(p_widths) - self.width / 2
+
+        return eq
+
+    sol = fsolve(fun, x0=equidistant_pillar_widths)
+
+    return p_centers(sol.x)
 
 
 @PillarProfile.pillar_boundaries
