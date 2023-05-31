@@ -3,7 +3,7 @@ import importlib.util
 from . import profile
 from . import roll_pass
 
-VERSION = "2.0.0"
+VERSION = "2.1.0"
 
 from pyroll.core import config as _config
 
@@ -11,6 +11,7 @@ from pyroll.core import config as _config
 @_config("PYROLL_PILLAR_MODEL")
 class Config:
     PILLAR_COUNT = 30
+    PILLAR_TYPE = "EQUIDISTANT"
 
 
 REPORT_INSTALLED = bool(importlib.util.find_spec("pyroll.report"))

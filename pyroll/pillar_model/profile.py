@@ -28,40 +28,50 @@ class PillarProfile(Profile):
 
 
 @PillarProfile.pillars
-def pillars(self: PillarProfile):
+def pillars_equidistant(self: PillarProfile):
     from . import Config
+    if Config.PILLAR_TYPE.lower() == "equidistant":
 
-    final_pillar_area = self.cross_section.area / Config.PILLAR_COUNT
-    equidistant_pillar_width = self.width / 2 / (Config.PILLAR_COUNT - 0.5)
+        dw = self.width / 2 / (Config.PILLAR_COUNT - 0.5)
+        return np.arange(0, self.width / 2, dw)
 
-    def p_centers(p_widths):
-        return np.arange(0, self.width / 2, p_widths)
 
-    def p_heights(p_widths):
-        return np.array(
-            [
-                shapely.intersection(
-                    self.cross_section,
-                    shapely.LineString([(p, self.cross_section.bounds[1]), (p, self.cross_section.bounds[3])])
-                ).length
-                for p in p_centers(p_widths)
-            ]
-        )
+@PillarProfile.pillars
+def pillars_uniform(self: PillarProfile):
+    from . import Config
+    if Config.PILLAR_TYPE.lower() == "uniform":
 
-    equidistant_pillar_centers = p_centers(equidistant_pillar_width)
-    equidistant_pillar_widths = np.full((1, Config.PILLAR_COUNT / 2), equidistant_pillar_width)
+        dw = self.width / 2 / (Config.PILLAR_COUNT - 0.5)
+        equidistant_pillar_widths = np.full(Config.PILLAR_COUNT, dw)
 
-    def fun(p_widths):
-        eq = np.zeros(0, equidistant_pillar_centers + 1)
-        for i in range(len(eq)):
-            eq[i] = final_pillar_area - (p_widths[i] * p_heights(p_widths[i]))
-        eq[:-1] = np.sum(p_widths) - self.width / 2
+        def p_centers(p_widths):
+            centers = np.zeros_like(p_widths)
+            dist = (p_widths[:-1] + p_widths[1:]) / 2
+            centers[1:] = centers[:-1] + np.cumsum(dist)
+            return centers
 
-        return eq
+        def p_heights(p_widths):
+            return np.array(
+                [
+                    shapely.intersection(
+                        self.cross_section,
+                        shapely.LineString([(p, self.cross_section.bounds[1]), (p, self.cross_section.bounds[3])])
+                    ).length
+                    for p in p_centers(p_widths)
+                ]
+            )
 
-    sol = fsolve(fun, x0=equidistant_pillar_widths)
+        def fun(p_widths):
+            ph = p_heights(p_widths)
+            areas = (p_widths * ph)
+            diffs = areas[1:] - areas[:-1]
+            w = np.sum(p_widths) - self.width / 2 - p_widths[0] / 2
 
-    return p_centers(sol.x)
+            return np.append(diffs, w)
+
+        sol = fsolve(fun, x0=equidistant_pillar_widths)
+
+        return p_centers(sol)
 
 
 @PillarProfile.pillar_boundaries

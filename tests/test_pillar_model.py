@@ -12,6 +12,7 @@ from pyroll.pillar_model.profile import PillarProfile
 def test_pillars():
     try:
         pyroll.pillar_model.Config.PILLAR_COUNT = 4
+        pyroll.pillar_model.Config.PILLAR_TYPE = "EQUIDISTANT"
 
         p: Union[PillarProfile, Profile] = Profile.box(width=14, height=1)
 
@@ -23,6 +24,7 @@ def test_pillars():
 def test_pillar_boundaries():
     try:
         pyroll.pillar_model.Config.PILLAR_COUNT = 4
+        pyroll.pillar_model.Config.PILLAR_TYPE = "EQUIDISTANT"
 
         p: Union[PillarProfile, Profile] = Profile.box(width=14, height=1)
 
@@ -40,6 +42,7 @@ def test_pillar_heights_box():
 def test_pillar_heights_square():
     try:
         pyroll.pillar_model.Config.PILLAR_COUNT = 4
+        pyroll.pillar_model.Config.PILLAR_TYPE = "EQUIDISTANT"
 
         p: Union[PillarProfile, Profile] = Profile.square(diagonal=14)
 
@@ -57,6 +60,7 @@ def test_pillar_boundary_heights_box():
 def test_pillar_boundary_heights_square():
     try:
         pyroll.pillar_model.Config.PILLAR_COUNT = 4
+        pyroll.pillar_model.Config.PILLAR_TYPE = "EQUIDISTANT"
 
         p: Union[PillarProfile, Profile] = Profile.square(diagonal=14)
 
@@ -73,9 +77,10 @@ def test_pillar_boundary_heights_square():
         Profile.diamond(height=5, width=10, corner_radius=1)
     ]
 )
-def test_pillar_sections(p: Union[PillarProfile, Profile]):
+def test_pillar_sections_equidistant(p: Union[PillarProfile, Profile]):
     try:
         pyroll.pillar_model.Config.PILLAR_COUNT = 4
+        pyroll.pillar_model.Config.PILLAR_TYPE = "EQUIDISTANT"
         fig: plt.Figure = plt.figure()
         ax: plt.Axes = fig.subplots()
 
@@ -89,3 +94,33 @@ def test_pillar_sections(p: Union[PillarProfile, Profile]):
         plt.show()
     finally:
         del pyroll.pillar_model.Config.PILLAR_COUNT
+        del pyroll.pillar_model.Config.PILLAR_TYPE
+
+
+@pytest.mark.parametrize(
+    "p", [
+        Profile.round(radius=10),
+        Profile.square(side=10, corner_radius=1),
+        Profile.box(height=10, width=5, corner_radius=1),
+        Profile.diamond(height=5, width=10, corner_radius=1)
+    ]
+)
+def test_pillar_sections_uniform(p: Union[PillarProfile, Profile]):
+    try:
+        pyroll.pillar_model.Config.PILLAR_COUNT = 4
+        pyroll.pillar_model.Config.PILLAR_TYPE = "UNIFORM"
+
+        fig: plt.Figure = plt.figure()
+        ax: plt.Axes = fig.subplots()
+
+        ax.set_aspect("equal")
+
+        for c in reversed(p.pillar_sections):
+            z, y = np.array(c.boundary.xy)
+            plt.fill(np.concatenate([-z, z]), np.concatenate([y, y]), alpha=0.5)
+
+        plt.plot(*p.cross_section.boundary.xy, c="k")
+        plt.show()
+    finally:
+        del pyroll.pillar_model.Config.PILLAR_COUNT
+        del pyroll.pillar_model.Config.PILLAR_TYPE
