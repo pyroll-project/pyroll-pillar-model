@@ -28,6 +28,41 @@ class PillarDiskElement(RollPass.DiskElement):
     """Array of elongation values for each pillar."""
 
 
+RollPass.total_pillar_elongations = Hook[np.ndarray]()
+"""Array of total elongation for each pillar for a roll pass."""
+
+RollPass.total_pillar_spreads = Hook[np.ndarray]()
+"""Array of total spread for each pillar for a roll pass."""
+
+RollPass.total_pillar_draughts = Hook[np.ndarray]()
+"""Array of total drought for each pillar for a roll pass."""
+
+pyroll.core.root_hooks.add(pyroll.core.RollPass.total_pillar_elongations)
+pyroll.core.root_hooks.add(pyroll.core.RollPass.total_pillar_spreads)
+pyroll.core.root_hooks.add(pyroll.core.RollPass.total_pillar_draughts)
+
+
+@RollPass.total_pillar_elongations
+def total_pillar_elongations(self: RollPass):
+    if self.disk_elements:
+        p_elongations = [de.pillar_elongations for de in self.disk_elements]
+        return np.prod(p_elongations, axis=1)
+
+
+@RollPass.total_pillar_spreads
+def total_pillar_spreads(self: RollPass):
+    if self.disk_elements:
+        p_spreads = [de.pillar_spreads for de in self.disk_elements]
+        return np.prod(p_spreads, axis=1)
+
+
+@RollPass.total_pillar_draughts
+def total_pillar_draughts(self: RollPass):
+    if self.disk_elements:
+        p_draughts = [de.pillar_draughts for de in self.disk_elements]
+        return np.prod(p_draughts, axis=1)
+
+
 @PillarDiskElement.pillars_in_contact
 def pillars_in_contact(self: PillarDiskElement):
     rp = self.roll_pass
