@@ -99,7 +99,7 @@ def roll_pass_contact_area(unit: Unit):
 
 
 @hookimpl(specname="unit_plot")
-def roll_pass_spread_distribution(unit: Unit):
+def roll_pass_strain_strain_rate_over_width(unit: Unit):
     if isinstance(unit, RollPass) and unit.disk_elements:
         rp: RollPass = unit
 
@@ -109,26 +109,24 @@ def roll_pass_spread_distribution(unit: Unit):
         ax1, ax2 = fig.subplots(2, sharex="all")
         ax1.grid(True)
         ax2.grid(True)
-        ax1.set_title("Spread Distribution")
-        ax2.set_xlabel("$x$")
-        ax1.set_ylabel("Local Spread $\\beta$")
-        ax2.set_ylabel("Cumulative Spread $\\Pi\\beta$")
+        ax1.set_title("Strain / Strain - Rate Distribution")
+        ax2.set_xlabel("$z$")
+        ax1.set_ylabel("Strain ")
+        ax2.set_ylabel("Strain rate")
 
-        def _gen():
-            for de in rp.disk_elements:
-                yield de.in_profile.x + 0.5 * de.length, de.out_profile.width / de.in_profile.width
-
-        gamma_ = [de.out_profile.height / de.in_profile.height for de in rp.disk_elements]
-        lambda_ = [de.in_profile.cross_section / de.out_profile.cross_section for de in rp.disk_elements]
-        x, beta_ = np.array(list(_gen())).T
-        ax1.plot(x, beta_)
-        ax2.plot(x, np.cumprod(beta_))
+        strains = np.sum([de.pillar_strains for de in rp.disk_elements], axis=0)
+        strain_rates = np.sum([de.pillar_strain_rates for de in rp.disk_elements], axis=0)
+        ax1.plot(unit.in_profile.pillars, strains, color='C0')
+        ax1.plot(-unit.in_profile.pillars, strains, color='C0')
+        ax2.plot(unit.in_profile.pillars, strain_rates, color='C1')
+        ax2.plot(-unit.in_profile.pillars, strain_rates, color='C1')
         fig.subplots_adjust(hspace=0)
 
         return fig
 
+
 @hookimpl(specname="unit_plot")
-def roll_pass_spread_distribution(unit: Unit):
+def roll_pass_forming_values_distribution(unit: Unit):
     if isinstance(unit, RollPass) and unit.disk_elements:
         rp: RollPass = unit
 
@@ -151,7 +149,7 @@ def roll_pass_spread_distribution(unit: Unit):
         lambda_ = [de.in_profile.cross_section.area / de.out_profile.cross_section.area for de in rp.disk_elements]
         x, beta_ = np.array(list(_gen())).T
         ax1.plot(x, gamma_, label='$\\gamma$')
-        ax1.plot(x,lambda_, label='$\\lambda$')
+        ax1.plot(x, lambda_, label='$\\lambda$')
         ax1.plot(x, beta_, label='$\\beta$')
         ax2.plot(x, np.cumprod(gamma_), label='$\\gamma$')
         ax2.plot(x, np.cumprod(lambda_), label='$\\lambda$')
@@ -160,5 +158,3 @@ def roll_pass_spread_distribution(unit: Unit):
         fig.subplots_adjust(hspace=0)
 
         return fig
-
-
