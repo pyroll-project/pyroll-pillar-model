@@ -1,4 +1,4 @@
-# PyRoll Pillar Model
+# PyRolL Pillar Model
 
 The Pillar Model plugin serves as a base package for other plugins using the division of the profile in collinear pillars along width direction.  
 It is mainly intended for calculation of material flow, groove filling and spread.

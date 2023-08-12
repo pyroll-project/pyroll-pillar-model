@@ -6,7 +6,7 @@ import numpy as np
 import pyroll.pillar_model
 from pyroll.core import Profile, PassSequence, RollPass, Roll, CircularOvalGroove, Transport, RoundGroove
 
-DISK_ELEMENT_COUNT = 30
+DISK_ELEMENT_COUNT = 15
 
 
 def pillar_spreads(self: RollPass.DiskElement):
