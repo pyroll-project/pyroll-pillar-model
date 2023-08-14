@@ -27,6 +27,21 @@ class PillarDiskElement(RollPass.DiskElement):
     pillar_elongations = Hook[np.ndarray]()
     """Array of elongation values for each pillar."""
 
+    pillar_log_spreads = Hook[np.ndarray]()
+    """Array of log spread values for each pillar."""
+
+    pillar_log_draughts = Hook[np.ndarray]()
+    """Array of log draught values for each pillar."""
+
+    pillar_log_elongations = Hook[np.ndarray]()
+    """Array of log elongation values for each pillar."""
+
+    pillar_strains = Hook[np.ndarray]()
+    """Array of strain values for each pillar."""
+
+    pillar_strain_rates = Hook[np.ndarray]()
+    """Array of strain rate values for each pillar."""
+
 
 RollPass.total_pillar_elongations = Hook[np.ndarray]()
 """Array of total elongation for each pillar for a roll pass."""
@@ -37,30 +52,29 @@ RollPass.total_pillar_spreads = Hook[np.ndarray]()
 RollPass.total_pillar_draughts = Hook[np.ndarray]()
 """Array of total drought for each pillar for a roll pass."""
 
+RollPass.total_pillar_log_elongations = Hook[np.ndarray]()
+"""Array of total logarithmic elongation for each pillar for a roll pass."""
+
+RollPass.total_pillar_log_spreads = Hook[np.ndarray]()
+"""Array of total logarithmic spread for each pillar for a roll pass."""
+
+RollPass.total_pillar_log_draughts = Hook[np.ndarray]()
+"""Array of total logarithmic drought for each pillar for a roll pass."""
+
+RollPass.total_pillar_strains = Hook[np.ndarray]()
+"""Array of total strains for each pillar for a roll pass."""
+
+RollPass.total_pillar_strain_rates = Hook[np.ndarray]()
+"""Array of total strain rates for each pillar for a roll pass."""
+
 pyroll.core.root_hooks.add(pyroll.core.RollPass.total_pillar_elongations)
 pyroll.core.root_hooks.add(pyroll.core.RollPass.total_pillar_spreads)
 pyroll.core.root_hooks.add(pyroll.core.RollPass.total_pillar_draughts)
-
-
-@RollPass.total_pillar_elongations
-def total_pillar_elongations(self: RollPass):
-    if self.disk_elements:
-        p_elongations = [de.pillar_elongations for de in self.disk_elements]
-        return np.prod(p_elongations, axis=1)
-
-
-@RollPass.total_pillar_spreads
-def total_pillar_spreads(self: RollPass):
-    if self.disk_elements:
-        p_spreads = [de.pillar_spreads for de in self.disk_elements]
-        return np.prod(p_spreads, axis=1)
-
-
-@RollPass.total_pillar_draughts
-def total_pillar_draughts(self: RollPass):
-    if self.disk_elements:
-        p_draughts = [de.pillar_draughts for de in self.disk_elements]
-        return np.prod(p_draughts, axis=1)
+pyroll.core.root_hooks.add(pyroll.core.RollPass.total_pillar_log_elongations)
+pyroll.core.root_hooks.add(pyroll.core.RollPass.total_pillar_log_spreads)
+pyroll.core.root_hooks.add(pyroll.core.RollPass.total_pillar_log_draughts)
+pyroll.core.root_hooks.add(pyroll.core.RollPass.total_pillar_strains)
+pyroll.core.root_hooks.add(pyroll.core.RollPass.total_pillar_strain_rates)
 
 
 @PillarDiskElement.pillars_in_contact
@@ -96,6 +110,88 @@ def pillar_spreads(self: PillarDiskElement):
 @PillarDiskElement.pillar_elongations
 def pillar_elongations(self: PillarDiskElement):
     return 1 / (self.pillar_draughts * self.pillar_spreads)
+
+
+@PillarDiskElement.pillar_log_draughts
+def pillar_log_draughts(self: PillarDiskElement):
+    return np.log(self.pillar_draughts)
+
+
+@PillarDiskElement.pillar_log_spreads
+def pillar_log_spreads(self: PillarDiskElement):
+    return np.log(self.pillar_spreads)
+
+
+@PillarDiskElement.pillar_log_elongations
+def pillar_log_elongations(self: PillarDiskElement):
+    return np.log(self.pillar_elongations)
+
+
+@RollPass.total_pillar_draughts
+def total_pillar_draughts(self: RollPass):
+    if self.disk_elements:
+        p_draughts = [de.pillar_draughts for de in self.disk_elements]
+        return np.prod(p_draughts, axis=1)
+
+
+@RollPass.total_pillar_spreads
+def total_pillar_spreads(self: RollPass):
+    if self.disk_elements:
+        p_spreads = [de.pillar_spreads for de in self.disk_elements]
+        return np.prod(p_spreads, axis=1)
+
+
+@RollPass.total_pillar_elongations
+def total_pillar_elongations(self: RollPass):
+    if self.disk_elements:
+        p_elongations = [de.pillar_elongations for de in self.disk_elements]
+        return np.prod(p_elongations, axis=1)
+
+
+@RollPass.total_pillar_log_draughts
+def total_pillar_log_draughts(self: RollPass):
+    p_log_draughts = [de.pillar_log_draughts for de in self.disk_elements]
+    return np.sum(p_log_draughts, axis=1)
+
+
+@RollPass.total_pillar_log_spreads
+def total_pillar_log_spreads(self: RollPass):
+    p_log_spreads = [de.pillar_log_spreads for de in self.disk_elements]
+    return np.sum(p_log_spreads, axis=1)
+
+
+@RollPass.total_pillar_log_elongations
+def total_pillar_log_elongations(self: RollPass):
+    p_log_elongations = [de.pillar_log_elongations for de in self.disk_elements]
+    return np.sum(p_log_elongations, axis=1)
+
+
+@PillarDiskElement.pillar_strains
+def pillar_strains(self: PillarDiskElement):
+    return np.sqrt(
+        2 / 3 * (self.pillar_log_elongations ** 2 + self.pillar_log_spreads ** 2 + self.pillar_log_draughts ** 2))
+
+
+@PillarDiskElement.pillar_strain_rates
+def pillar_strain_rates(self: PillarDiskElement):
+    local_roll_radii = np.concatenate(
+        [self.roll_pass.roll.max_radius - self.roll_pass.roll.surface_interpolation(0, center) for center in
+         self.in_profile.pillars],
+        axis=0).flatten()
+
+    return self.roll_pass.velocity * self.pillar_strains / local_roll_radii
+
+
+@RollPass.total_pillar_strains
+def total_pillar_strains(self: RollPass):
+    p_strains = [de.pillar_strains for de in self.disk_elements]
+    return np.sum(p_strains, axis=1)
+
+
+@RollPass.total_pillar_strain_rates
+def total_pillar_strain_rates(self: RollPass):
+    p_strain_rates = [de.pillar_strain_rates for de in self.disk_elements]
+    return np.sum(p_strain_rates, axis=1)
 
 
 @PillarDiskElement.OutProfile.pillar_widths

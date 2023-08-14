@@ -6,7 +6,7 @@ import numpy as np
 import pyroll.pillar_model
 from pyroll.core import Profile, PassSequence, RollPass, Roll, CircularOvalGroove, Transport, RoundGroove
 
-DISK_ELEMENT_COUNT = 30
+DISK_ELEMENT_COUNT = 15
 
 
 def pillar_spreads(self: RollPass.DiskElement):
@@ -14,7 +14,7 @@ def pillar_spreads(self: RollPass.DiskElement):
 
 
 def test_solve(tmp_path: Path, caplog):
-    caplog.set_level(logging.DEBUG, logger="pyroll")
+    caplog.set_level(logging.INFO, logger="pyroll")
 
     pyroll.pillar_model.Config.PILLAR_COUNT = 30
     pyroll.pillar_model.Config.PILLAR_TYPE = "EQUIDISTANT"
@@ -88,7 +88,7 @@ def test_solve(tmp_path: Path, caplog):
 
 
 def test_solve_uniform(tmp_path: Path, caplog):
-    caplog.set_level(logging.DEBUG, logger="pyroll")
+    caplog.set_level(logging.INFO, logger="pyroll")
 
     pyroll.pillar_model.PILLAR_COUNT = 30
     pyroll.pillar_model.PILLAR_TYPE = "UNIFORM"
