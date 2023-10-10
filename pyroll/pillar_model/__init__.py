@@ -3,7 +3,7 @@ import importlib.util
 from . import profile
 from . import roll_pass
 
-VERSION = "2.2.0"
+VERSION = "2.2.1"
 
 from pyroll.core import config as _config
 
