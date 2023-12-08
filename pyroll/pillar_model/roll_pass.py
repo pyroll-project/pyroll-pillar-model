@@ -14,6 +14,7 @@ pyroll.core.root_hooks.add(pyroll.core.Rotator.OutProfile.pillar_heights)
 pyroll.core.root_hooks.add(pyroll.core.Rotator.OutProfile.pillar_widths)
 pyroll.core.root_hooks.add(pyroll.core.Rotator.OutProfile.pillar_areas)
 
+
 @RollPass.DiskElement.extension_class
 class PillarDiskElement(RollPass.DiskElement):
     pillars_in_contact = Hook[np.ndarray]()
