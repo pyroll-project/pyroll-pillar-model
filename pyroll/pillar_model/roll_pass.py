@@ -7,10 +7,12 @@ import pyroll.core
 pyroll.core.root_hooks.add(pyroll.core.RollPass.DiskElement.OutProfile.pillars)
 pyroll.core.root_hooks.add(pyroll.core.RollPass.DiskElement.OutProfile.pillar_heights)
 pyroll.core.root_hooks.add(pyroll.core.RollPass.DiskElement.OutProfile.pillar_widths)
+pyroll.core.root_hooks.add(pyroll.core.RollPass.DiskElement.OutProfile.pillar_areas)
 
 pyroll.core.root_hooks.add(pyroll.core.Rotator.OutProfile.pillars)
 pyroll.core.root_hooks.add(pyroll.core.Rotator.OutProfile.pillar_heights)
 pyroll.core.root_hooks.add(pyroll.core.Rotator.OutProfile.pillar_widths)
+pyroll.core.root_hooks.add(pyroll.core.Rotator.OutProfile.pillar_areas)
 
 
 @RollPass.DiskElement.extension_class

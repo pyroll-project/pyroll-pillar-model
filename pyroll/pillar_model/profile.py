@@ -26,12 +26,14 @@ class PillarProfile(Profile):
     pillar_sections = Hook[np.ndarray]()
     """Array of the pillar section areas (Polygon geometry objects)."""
 
+    pillar_areas = Hook[np.ndarray]()
+    """Array of the pillar section areas (numerical value)."""
+
 
 @PillarProfile.pillars
 def pillars_equidistant(self: PillarProfile):
     from . import Config
     if Config.PILLAR_TYPE.lower() == "equidistant":
-
         dw = self.width / 2 / (Config.PILLAR_COUNT - 0.5)
         return np.arange(0, self.width / 2, dw)
 
@@ -40,7 +42,6 @@ def pillars_equidistant(self: PillarProfile):
 def pillars_uniform(self: PillarProfile):
     from . import Config
     if Config.PILLAR_TYPE.lower() == "uniform":
-
         dw = self.width / 2 / (Config.PILLAR_COUNT - 0.5)
         equidistant_pillar_widths = np.full(Config.PILLAR_COUNT, dw)
 
@@ -127,3 +128,8 @@ def pillar_sections(self: PillarProfile):
         )
 
     return a
+
+
+@PillarProfile.pillar_areas
+def pillar_areas(self: PillarProfile):
+    return np.array([section.area for section in self.pillar_sections])
