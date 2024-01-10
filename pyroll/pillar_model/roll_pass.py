@@ -133,39 +133,39 @@ def pillar_log_elongations(self: PillarDiskElement):
 def total_pillar_draughts(self: RollPass):
     if self.disk_elements:
         p_draughts = [de.pillar_draughts for de in self.disk_elements]
-        return np.prod(p_draughts, axis=1)
+        return np.prod(p_draughts, axis=0)
 
 
 @RollPass.total_pillar_spreads
 def total_pillar_spreads(self: RollPass):
     if self.disk_elements:
         p_spreads = [de.pillar_spreads for de in self.disk_elements]
-        return np.prod(p_spreads, axis=1)
+        return np.prod(p_spreads, axis=0)
 
 
 @RollPass.total_pillar_elongations
 def total_pillar_elongations(self: RollPass):
     if self.disk_elements:
         p_elongations = [de.pillar_elongations for de in self.disk_elements]
-        return np.prod(p_elongations, axis=1)
+        return np.prod(p_elongations, axis=0)
 
 
 @RollPass.total_pillar_log_draughts
 def total_pillar_log_draughts(self: RollPass):
     p_log_draughts = [de.pillar_log_draughts for de in self.disk_elements]
-    return np.sum(p_log_draughts, axis=1)
+    return np.sum(p_log_draughts, axis=0)
 
 
 @RollPass.total_pillar_log_spreads
 def total_pillar_log_spreads(self: RollPass):
     p_log_spreads = [de.pillar_log_spreads for de in self.disk_elements]
-    return np.sum(p_log_spreads, axis=1)
+    return np.sum(p_log_spreads, axis=0)
 
 
 @RollPass.total_pillar_log_elongations
 def total_pillar_log_elongations(self: RollPass):
     p_log_elongations = [de.pillar_log_elongations for de in self.disk_elements]
-    return np.sum(p_log_elongations, axis=1)
+    return np.sum(p_log_elongations, axis=0)
 
 
 @PillarDiskElement.pillar_strains
@@ -187,13 +187,13 @@ def pillar_strain_rates(self: PillarDiskElement):
 @RollPass.total_pillar_strains
 def total_pillar_strains(self: RollPass):
     p_strains = [de.pillar_strains for de in self.disk_elements]
-    return np.sum(p_strains, axis=1)
+    return np.sum(p_strains, axis=0)
 
 
 @RollPass.total_pillar_strain_rates
 def total_pillar_strain_rates(self: RollPass):
     p_strain_rates = [de.pillar_strain_rates for de in self.disk_elements]
-    return np.sum(p_strain_rates, axis=1)
+    return np.sum(p_strain_rates, axis=0)
 
 
 @PillarDiskElement.OutProfile.pillar_widths
