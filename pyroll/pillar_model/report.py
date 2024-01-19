@@ -1,8 +1,9 @@
-import matplotlib.pyplot as plt
 import numpy as np
-from pyroll.core import Unit, RollPass
-from pyroll.report import hookimpl
+import matplotlib.pyplot as plt
 import matplotlib.animation as mpl_ani
+
+from pyroll.report import hookimpl
+from pyroll.core import Unit, RollPass
 
 
 @hookimpl(specname="unit_plot")
@@ -158,6 +159,7 @@ def roll_pass_forming_values_distribution(unit: Unit):
         fig.subplots_adjust(hspace=0)
 
         return fig
+
 
 @hookimpl(specname="unit_plot")
 def roll_pass_velocity_over_width(unit: Unit):
