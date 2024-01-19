@@ -17,6 +17,8 @@ dependencies = [
     "pyroll-report ~= 2.0.0",
 ]
 
+features = ["local-velocity-model"]
+
 [envs.docs]
 path = ".docs_venv"
 dependencies = [
