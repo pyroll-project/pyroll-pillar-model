@@ -44,6 +44,9 @@ class PillarDiskElement(RollPass.DiskElement):
     pillar_strain_rates = Hook[np.ndarray]()
     """Array of strain rate values for each pillar."""
 
+    pillar_velocities = Hook[np.ndarray]()
+    """Array of velocity values for each pillar."""
+
 
 RollPass.total_pillar_elongations = Hook[np.ndarray]()
 """Array of total elongation for each pillar for a roll pass."""
@@ -140,6 +143,13 @@ def pillar_log_spreads(self: PillarDiskElement):
 @PillarDiskElement.pillar_log_elongations
 def pillar_log_elongations(self: PillarDiskElement):
     return np.log(self.pillar_elongations)
+
+
+@PillarDiskElement.pillar_velocities
+def pillar_velocities(self: PillarDiskElement):
+    if not LOCAL_VELOCITY_MODEL_INSTALLED:
+        return None
+    return self.in_profile.velocity * self.pillar_elongations
 
 
 @RollPass.total_pillar_draughts

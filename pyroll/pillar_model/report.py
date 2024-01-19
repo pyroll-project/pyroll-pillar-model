@@ -158,3 +158,23 @@ def roll_pass_forming_values_distribution(unit: Unit):
         fig.subplots_adjust(hspace=0)
 
         return fig
+
+@hookimpl(specname="unit_plot")
+def roll_pass_velocity_over_width(unit: Unit):
+    if isinstance(unit, RollPass) and unit.disk_elements:
+        rp: RollPass = unit
+
+        fig: plt.Figure = plt.figure()
+        ax: plt.Axes = fig.add_subplot()
+
+        ax.grid(True)
+        ax.set_title("Velocity Distribution")
+        ax.set_xlabel("$z$")
+        ax.set_ylabel("Velocity")
+
+        velocities = np.sum([de.pillar_velocities for de in rp.disk_elements], axis=0)
+
+        ax.plot(unit.in_profile.pillars, velocities, color='C0')
+        ax.plot(-unit.in_profile.pillars, velocities, color='C0')
+
+        return fig
