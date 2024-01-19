@@ -1,10 +1,10 @@
 import logging
-
 import webbrowser
 from pathlib import Path
 
 from pyroll.core import Profile, PassSequence, RollPass, Roll, CircularOvalGroove
 import pyroll.pillar_model
+import pyroll.local_velocity
 
 
 @RollPass.DiskElement.pillar_spreads
@@ -42,6 +42,7 @@ def test_solve_round_oval_equidistant(tmp_path: Path, caplog):
                     ),
                     nominal_radius=160e-3,
                     rotational_frequency=1,
+                    neutral_point=20e-3
                 ),
                 gap=4e-3,
                 disk_element_count=DISK_ELEMENT_COUNT,
@@ -94,6 +95,7 @@ def test_solve_round_oval_uniform(tmp_path: Path, caplog):
                     ),
                     nominal_radius=160e-3,
                     rotational_frequency=1,
+                    neutral_point=20e-3
                 ),
                 gap=4e-3,
                 disk_element_count=DISK_ELEMENT_COUNT,
