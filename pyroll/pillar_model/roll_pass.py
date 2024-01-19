@@ -1,8 +1,11 @@
-import numpy as np
 import shapely
-from pyroll.core import RollPass, Hook
+import numpy as np
+import importlib.util
 
 import pyroll.core
+from pyroll.core import RollPass, Hook
+
+LOCAL_VELOCITY_MODEL_INSTALLED = bool(importlib.util.find_spec("pyroll.local_velocity"))
 
 pyroll.core.root_hooks.add(pyroll.core.RollPass.DiskElement.OutProfile.pillars)
 pyroll.core.root_hooks.add(pyroll.core.RollPass.DiskElement.OutProfile.pillar_heights)
