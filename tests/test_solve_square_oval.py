@@ -43,7 +43,7 @@ def test_solve_square_oval_equidistant_pillars(tmp_path: Path, caplog):
                     ),
                     nominal_radius=160e-3,
                     rotational_frequency=1,
-                    neutral_point=20e-3
+                    neutral_point=-20e-3
                 ),
                 gap=2e-3,
                 disk_element_count=DISK_ELEMENT_COUNT,
@@ -96,7 +96,7 @@ def test_solve_square_oval_uniform_pillars(tmp_path: Path, caplog):
                     ),
                     nominal_radius=160e-3,
                     rotational_frequency=1,
-                    neutral_point=20e-3
+                    neutral_point=-20e-3
                 ),
                 gap=2e-3,
                 disk_element_count=DISK_ELEMENT_COUNT,

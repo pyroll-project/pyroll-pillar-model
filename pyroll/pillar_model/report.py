@@ -185,7 +185,8 @@ def roll_pass_velocity_profile(unit: Unit):
             ),
             title='Workpiece Velocity Profile',
             width=1200,
-            height=800
+            height=800,
+            template='simple_white'
         )
 
         html_string = pio.to_html(fig, full_html=False, include_plotlyjs='cdn')

@@ -9,7 +9,7 @@ import pyroll.local_velocity
 
 @RollPass.DiskElement.pillar_spreads
 def pillar_spreads(self: RollPass.DiskElement):
-    return self.pillar_draughts ** -0.8
+    return self.pillar_draughts ** -0.5
 
 
 DISK_ELEMENT_COUNT = 15
@@ -46,7 +46,7 @@ def test_solve_round_constricted_box_equidistant(tmp_path: Path, caplog):
                     ),
                     nominal_radius=160e-3,
                     rotational_frequency=1,
-                    neutral_point=20e-3
+                    neutral_point=-20e-3
                 ),
                 gap=4e-3,
                 disk_element_count=DISK_ELEMENT_COUNT,
@@ -103,7 +103,7 @@ def test_solve_round_constricted_box_uniform(tmp_path: Path, caplog):
                     ),
                     nominal_radius=160e-3,
                     rotational_frequency=1,
-                    neutral_point=20e-3
+                    neutral_point=-20e-3
                 ),
                 gap=4e-3,
                 disk_element_count=DISK_ELEMENT_COUNT,
