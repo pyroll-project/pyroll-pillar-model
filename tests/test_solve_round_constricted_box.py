@@ -13,12 +13,12 @@ def pillar_spreads(self: RollPass.DiskElement):
 
 
 DISK_ELEMENT_COUNT = 15
-pyroll.pillar_model.PILLAR_COUNT = 30
+pyroll.pillar_model.Config.PILLAR_COUNT = 30
 
 
 def test_solve_round_constricted_box_equidistant(tmp_path: Path, caplog):
     caplog.set_level(logging.INFO, logger="pyroll")
-    pyroll.pillar_model.PILLAR_TYPE = "EQUIDISTANT"
+    pyroll.pillar_model.Config.PILLAR_TYPE = "EQUIDISTANT"
 
     in_profile = Profile.round(
         diameter=19.5e-3,
@@ -75,7 +75,7 @@ def test_solve_round_constricted_box_equidistant(tmp_path: Path, caplog):
 
 def test_solve_round_constricted_box_uniform(tmp_path: Path, caplog):
     caplog.set_level(logging.INFO, logger="pyroll")
-    pyroll.pillar_model.PILLAR_TYPE = "UNIFORM"
+    pyroll.pillar_model.Config.PILLAR_TYPE = "UNIFORM"
 
     in_profile = Profile.round(
         diameter=19.5e-3,
