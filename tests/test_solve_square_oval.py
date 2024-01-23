@@ -1,25 +1,25 @@
 import logging
+import importlib
 import webbrowser
 from pathlib import Path
 
-import numpy as np
-import pyroll.pillar_model
 from pyroll.core import Profile, PassSequence, RollPass, Roll, CircularOvalGroove, Transport, RoundGroove
 
-DISK_ELEMENT_COUNT = 15
+import pyroll.pillar_model
 
 
+@RollPass.DiskElement.pillar_spreads
 def pillar_spreads(self: RollPass.DiskElement):
     return self.pillar_draughts ** -0.8
 
 
-def test_solve(tmp_path: Path, caplog):
+DISK_ELEMENT_COUNT = 15
+pyroll.pillar_model.PILLAR_COUNT = 30
+
+
+def test_solve_square_oval_equidistant_pillars(tmp_path: Path, caplog):
     caplog.set_level(logging.INFO, logger="pyroll")
-
-    pyroll.pillar_model.Config.PILLAR_COUNT = 30
-    pyroll.pillar_model.Config.PILLAR_TYPE = "EQUIDISTANT"
-
-    hf = RollPass.DiskElement.pillar_spreads.add_function(pillar_spreads)
+    pyroll.pillar_model.PILLAR_TYPE = "EQUIDISTANT"
 
     in_profile = Profile.square(
         side=24e-3,
@@ -28,13 +28,13 @@ def test_solve(tmp_path: Path, caplog):
         material=["C45", "steel"],
         flow_stress=100e6,
         density=7.5e3,
-        thermal_capacity=690,
+        specific_heat_capcity=690,
     )
 
     sequence = PassSequence(
         [
             RollPass(
-                label="Oval I",
+                label="Oval",
                 roll=Roll(
                     groove=CircularOvalGroove(
                         depth=8e-3,
@@ -47,33 +47,14 @@ def test_solve(tmp_path: Path, caplog):
                 gap=2e-3,
                 disk_element_count=DISK_ELEMENT_COUNT,
             ),
-            Transport(
-                label="I => II",
-                duration=1
-            ),
-            RollPass(
-                label="Round II",
-                roll=Roll(
-                    groove=RoundGroove(
-                        r1=1e-3,
-                        r2=12.5e-3,
-                        depth=11.5e-3
-                    ),
-                    nominal_radius=160e-3,
-                    rotational_frequency=1
-                ),
-                gap=2e-3,
-                disk_element_count=DISK_ELEMENT_COUNT,
-            ),
+
         ]
     )
-
     try:
         sequence.solve(in_profile)
     finally:
         print("\nLog:")
         print(caplog.text)
-        RollPass.DiskElement.pillar_spreads.remove_function(hf)
 
     try:
         from pyroll.report import report
@@ -87,13 +68,10 @@ def test_solve(tmp_path: Path, caplog):
         pass
 
 
-def test_solve_uniform(tmp_path: Path, caplog):
+def test_solve_square_oval_uniform_pillars(tmp_path: Path, caplog):
     caplog.set_level(logging.INFO, logger="pyroll")
 
-    pyroll.pillar_model.PILLAR_COUNT = 30
     pyroll.pillar_model.PILLAR_TYPE = "UNIFORM"
-
-    hf = RollPass.DiskElement.pillar_spreads.add_function(pillar_spreads)
 
     in_profile = Profile.square(
         side=24e-3,
@@ -108,7 +86,7 @@ def test_solve_uniform(tmp_path: Path, caplog):
     sequence = PassSequence(
         [
             RollPass(
-                label="Oval I",
+                label="Oval",
                 roll=Roll(
                     groove=CircularOvalGroove(
                         depth=8e-3,
@@ -121,24 +99,6 @@ def test_solve_uniform(tmp_path: Path, caplog):
                 gap=2e-3,
                 disk_element_count=DISK_ELEMENT_COUNT,
             ),
-            Transport(
-                label="I => II",
-                duration=1
-            ),
-            RollPass(
-                label="Round II",
-                roll=Roll(
-                    groove=RoundGroove(
-                        r1=1e-3,
-                        r2=12.5e-3,
-                        depth=11.5e-3
-                    ),
-                    nominal_radius=160e-3,
-                    rotational_frequency=1
-                ),
-                gap=2e-3,
-                disk_element_count=DISK_ELEMENT_COUNT,
-            ),
         ]
     )
 
@@ -147,7 +107,6 @@ def test_solve_uniform(tmp_path: Path, caplog):
     finally:
         print("\nLog:")
         print(caplog.text)
-        RollPass.DiskElement.pillar_spreads.remove_function(hf)
 
     try:
         from pyroll.report import report

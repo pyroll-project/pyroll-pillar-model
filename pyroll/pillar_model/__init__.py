@@ -12,6 +12,7 @@ from pyroll.core import config as _config
 class Config:
     PILLAR_COUNT = 30
     PILLAR_TYPE = "EQUIDISTANT"
+    ELONGATION_CORRECTION = True
 
 
 REPORT_INSTALLED = bool(importlib.util.find_spec("pyroll.report"))
