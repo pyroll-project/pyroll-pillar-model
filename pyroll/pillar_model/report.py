@@ -1,6 +1,10 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as mpl_ani
+from matplotlib import cm
+from matplotlib.ticker import LinearLocator
+import plotly.graph_objects as go
+import plotly.io as pio
 
 from pyroll.report import hookimpl
 from pyroll.core import Unit, RollPass
@@ -162,21 +166,26 @@ def roll_pass_forming_values_distribution(unit: Unit):
 
 
 @hookimpl(specname="unit_plot")
-def roll_pass_velocity_over_width(unit: Unit):
+def roll_pass_velocity_profile(unit: Unit):
     if isinstance(unit, RollPass) and unit.disk_elements:
         rp: RollPass = unit
+        x = np.array([np.ones_like(de.out_profile.pillars) * de.out_profile.x for de in rp.disk_elements])
+        y = np.array([de.out_profile.pillars for de in rp.disk_elements])
+        z = np.array([de.pillar_velocities for de in rp.disk_elements])
 
-        fig: plt.Figure = plt.figure()
-        ax: plt.Axes = fig.add_subplot()
+        fig = go.Figure(data=[go.Surface(z=z, x=x, y=y)])
+        fig.update_layout(title='Workpiece Velocity Profile')
+        fig.update_layout(
+            scene=dict(
+                xaxis=dict(title='Contact Length', gridcolor='rgb(200, 200, 200)', showgrid=True),
+                yaxis=dict(title='Profile Width', gridcolor='rgb(200, 200, 200)', showgrid=True),
+                zaxis=dict(title='Velocity', gridcolor='rgb(200, 200, 200)', showgrid=True),
+            ),
+            title='Workpiece Velocity Profile',
+            width=1200,
+            height=800
+        )
 
-        ax.grid(True)
-        ax.set_title("Velocity Distribution")
-        ax.set_xlabel("$z$")
-        ax.set_ylabel("Velocity")
+        html_string = pio.to_html(fig, full_html=False, include_plotlyjs='cdn')
 
-        velocities = np.sum([de.pillar_velocities for de in rp.disk_elements], axis=0)
-
-        ax.plot(unit.in_profile.pillars, velocities, color='C0')
-        ax.plot(-unit.in_profile.pillars, velocities, color='C0')
-
-        return fig
+        return html_string

@@ -13,6 +13,7 @@ def pillar_spreads(self: RollPass.DiskElement):
 
 
 DISK_ELEMENT_COUNT = 15
+pyroll.pillar_model.Config.PILLAR_COUNT = 30
 
 
 def test_solve_round_oval_equidistant(tmp_path: Path, caplog):
