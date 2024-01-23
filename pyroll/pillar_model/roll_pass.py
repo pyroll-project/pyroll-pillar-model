@@ -112,14 +112,17 @@ def pillar_draughts(self: PillarDiskElement):
 
 @PillarDiskElement.pillar_spreads
 def pillar_spreads(self: PillarDiskElement, cycle: bool):
-    if cycle:
-        return None
+    return np.ones_like(self.in_profile.pillars)
 
+
+@PillarDiskElement.pillar_spreads(wrapper=True)
+def corrected_pillar_spreads(self: RollPass.DiskElement, cycle: bool):
     from . import Config
     if Config.ELONGATION_CORRECTION:
-        return (yield) ** self.roll_pass.pillar_spread_correction_exponents
+        if cycle:
+            return None
 
-    return np.ones_like(self.in_profile.pillars)
+        return (yield) ** self.roll_pass.pillar_spread_correction_exponents
 
 
 @PillarDiskElement.pillar_elongations
