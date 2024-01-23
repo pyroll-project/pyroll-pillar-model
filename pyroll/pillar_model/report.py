@@ -6,8 +6,10 @@ from matplotlib.ticker import LinearLocator
 import plotly.graph_objects as go
 import plotly.io as pio
 
-from pyroll.report import hookimpl
+
 from pyroll.core import Unit, RollPass
+from pyroll.report import hookimpl
+import matplotlib.animation as mpl_ani
 
 
 @hookimpl(specname="unit_plot")
