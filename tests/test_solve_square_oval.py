@@ -1,11 +1,11 @@
 import logging
-import importlib
 import webbrowser
 from pathlib import Path
 
 from pyroll.core import Profile, PassSequence, RollPass, Roll, CircularOvalGroove, Transport, RoundGroove
 
 import pyroll.pillar_model
+import pyroll.local_velocity
 
 
 @RollPass.DiskElement.pillar_spreads
@@ -14,12 +14,12 @@ def pillar_spreads(self: RollPass.DiskElement):
 
 
 DISK_ELEMENT_COUNT = 15
-pyroll.pillar_model.PILLAR_COUNT = 30
+pyroll.pillar_model.Config.PILLAR_COUNT = 30
 
 
 def test_solve_square_oval_equidistant_pillars(tmp_path: Path, caplog):
     caplog.set_level(logging.INFO, logger="pyroll")
-    pyroll.pillar_model.PILLAR_TYPE = "EQUIDISTANT"
+    pyroll.pillar_model.Config.PILLAR_TYPE = "EQUIDISTANT"
 
     in_profile = Profile.square(
         side=24e-3,
@@ -43,6 +43,7 @@ def test_solve_square_oval_equidistant_pillars(tmp_path: Path, caplog):
                     ),
                     nominal_radius=160e-3,
                     rotational_frequency=1,
+                    neutral_point=-20e-3
                 ),
                 gap=2e-3,
                 disk_element_count=DISK_ELEMENT_COUNT,
@@ -71,7 +72,7 @@ def test_solve_square_oval_equidistant_pillars(tmp_path: Path, caplog):
 def test_solve_square_oval_uniform_pillars(tmp_path: Path, caplog):
     caplog.set_level(logging.INFO, logger="pyroll")
 
-    pyroll.pillar_model.PILLAR_TYPE = "UNIFORM"
+    pyroll.pillar_model.Config.PILLAR_TYPE = "UNIFORM"
 
     in_profile = Profile.square(
         side=24e-3,
@@ -95,6 +96,7 @@ def test_solve_square_oval_uniform_pillars(tmp_path: Path, caplog):
                     ),
                     nominal_radius=160e-3,
                     rotational_frequency=1,
+                    neutral_point=-20e-3
                 ),
                 gap=2e-3,
                 disk_element_count=DISK_ELEMENT_COUNT,

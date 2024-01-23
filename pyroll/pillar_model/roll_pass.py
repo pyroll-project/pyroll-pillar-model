@@ -1,8 +1,11 @@
-import numpy as np
 import shapely
-from pyroll.core import RollPass, Hook
+import numpy as np
+import importlib.util
 
 import pyroll.core
+from pyroll.core import RollPass, Hook
+
+LOCAL_VELOCITY_MODEL_INSTALLED = bool(importlib.util.find_spec("pyroll.local_velocity"))
 
 pyroll.core.root_hooks.add(pyroll.core.RollPass.DiskElement.OutProfile.pillars)
 pyroll.core.root_hooks.add(pyroll.core.RollPass.DiskElement.OutProfile.pillar_heights)
@@ -44,6 +47,9 @@ class PillarDiskElement(RollPass.DiskElement):
     pillar_strain_rates = Hook[np.ndarray]()
     """Array of strain rate values for each pillar."""
 
+    pillar_velocities = Hook[np.ndarray]()
+    """Array of velocity values for each pillar."""
+
 
 RollPass.total_pillar_elongations = Hook[np.ndarray]()
 """Array of total elongation for each pillar for a roll pass."""
@@ -72,8 +78,8 @@ RollPass.total_pillar_strain_rates = Hook[np.ndarray]()
 RollPass.mean_elongation = Hook[float]()
 """Mean elongation of the profile in the roll pass."""
 
-RollPass.pillar_spread_correction_exponents = Hook[np.ndarray]()
-"""Array of correction exponents for pillar spreads of a roll pass."""
+RollPass.pillar_spread_correction_coefficients = Hook[np.ndarray]()
+"""Array of correction coefficients for pillar spreads of a roll pass."""
 
 pyroll.core.root_hooks.add(pyroll.core.RollPass.total_pillar_elongations)
 pyroll.core.root_hooks.add(pyroll.core.RollPass.total_pillar_spreads)
@@ -112,14 +118,18 @@ def pillar_draughts(self: PillarDiskElement):
 
 @PillarDiskElement.pillar_spreads
 def pillar_spreads(self: PillarDiskElement, cycle: bool):
-    if cycle:
-        return None
+    return np.ones_like(self.in_profile.pillars)
 
+
+@PillarDiskElement.pillar_spreads(wrapper=True)
+def corrected_pillar_spreads(self: RollPass.DiskElement, cycle: bool):
     from . import Config
     if Config.ELONGATION_CORRECTION:
-        return (yield) ** self.roll_pass.pillar_spread_correction_exponents
+        if cycle:
+            return None
 
-    return np.ones_like(self.in_profile.pillars)
+        spreads = (yield) * self.roll_pass.pillar_spread_correction_coefficients
+        return spreads
 
 
 @PillarDiskElement.pillar_elongations
@@ -140,6 +150,13 @@ def pillar_log_spreads(self: PillarDiskElement):
 @PillarDiskElement.pillar_log_elongations
 def pillar_log_elongations(self: PillarDiskElement):
     return np.log(self.pillar_elongations)
+
+
+@PillarDiskElement.pillar_velocities
+def pillar_velocities(self: PillarDiskElement):
+    if not LOCAL_VELOCITY_MODEL_INSTALLED:
+        return None
+    return self.in_profile.velocity * self.pillar_elongations
 
 
 @RollPass.total_pillar_draughts
@@ -307,20 +324,19 @@ def mean_elongation(self: RollPass):
     return np.sum(self.out_profile.pillar_areas) / np.sum(self.out_profile.pillar_areas / self.total_pillar_elongations)
 
 
-@RollPass.pillar_spread_correction_exponents
-def pillar_spread_correction_exponents(self: RollPass):
+@RollPass.pillar_spread_correction_coefficients
+def pillar_spread_correction_coefficients(self: RollPass):
     if self.disk_elements[-1].out_profile is None:
         return 1
 
-    def updated_correction_exponents_to_current_iteration_loop():
-        return - np.log(
-            RollPass.mean_elongation.get_result(self) * RollPass.total_pillar_draughts.get_result(self)) / np.log(
-            RollPass.total_pillar_spreads.get_result(self))
+    def updated_correction_coefficients_to_current_iteration_loop():
+        return 1 / (RollPass.mean_elongation.get_result(self) * RollPass.total_pillar_draughts.get_result(
+            self) * RollPass.total_pillar_spreads.get_result(self))
 
-    def calculate_coefficients(correction_exponents, relaxation_factor=0.5):
-        return self.pillar_spread_correction_exponents + (
-                self.pillar_spread_correction_exponents * correction_exponents - self.pillar_spread_correction_exponents) * relaxation_factor
+    def calculate_coefficients(correction_coefficients, relaxation_factor=0.5):
+        return self.pillar_spread_correction_coefficients + (
+                self.pillar_spread_correction_coefficients * correction_coefficients - self.pillar_spread_correction_coefficients) * relaxation_factor / self.disk_element_count
 
-    corr_exp = updated_correction_exponents_to_current_iteration_loop()
-    coeff = calculate_coefficients(correction_exponents=corr_exp)
+    corr_exp = updated_correction_coefficients_to_current_iteration_loop()
+    coeff = calculate_coefficients(correction_coefficients=corr_exp)
     return coeff

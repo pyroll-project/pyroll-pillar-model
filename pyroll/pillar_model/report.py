@@ -1,5 +1,12 @@
-import matplotlib.pyplot as plt
 import numpy as np
+import matplotlib.pyplot as plt
+import matplotlib.animation as mpl_ani
+from matplotlib import cm
+from matplotlib.ticker import LinearLocator
+import plotly.graph_objects as go
+import plotly.io as pio
+
+
 from pyroll.core import Unit, RollPass
 from pyroll.report import hookimpl
 import matplotlib.animation as mpl_ani
@@ -158,3 +165,30 @@ def roll_pass_forming_values_distribution(unit: Unit):
         fig.subplots_adjust(hspace=0)
 
         return fig
+
+
+@hookimpl(specname="unit_plot")
+def roll_pass_velocity_profile(unit: Unit):
+    if isinstance(unit, RollPass) and unit.disk_elements:
+        rp: RollPass = unit
+        x = np.array([np.ones_like(de.out_profile.pillars) * de.out_profile.x for de in rp.disk_elements])
+        y = np.array([de.out_profile.pillars for de in rp.disk_elements])
+        z = np.array([de.pillar_velocities for de in rp.disk_elements])
+
+        fig = go.Figure(data=[go.Surface(z=z, x=x, y=y)])
+        fig.update_layout(title='Workpiece Velocity Profile')
+        fig.update_layout(
+            scene=dict(
+                xaxis=dict(title='Contact Length', gridcolor='rgb(200, 200, 200)', showgrid=True),
+                yaxis=dict(title='Profile Width', gridcolor='rgb(200, 200, 200)', showgrid=True),
+                zaxis=dict(title='Velocity', gridcolor='rgb(200, 200, 200)', showgrid=True),
+            ),
+            title='Workpiece Velocity Profile',
+            width=1200,
+            height=800,
+            template='simple_white'
+        )
+
+        html_string = pio.to_html(fig, full_html=False, include_plotlyjs='cdn')
+
+        return html_string
