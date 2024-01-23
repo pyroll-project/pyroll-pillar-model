@@ -2,10 +2,9 @@ import importlib.util
 
 from . import profile
 from . import roll_pass
+from pyroll.core import config as _config
 
 VERSION = "2.1.3"
-
-from pyroll.core import config as _config
 
 
 @_config("PYROLL_PILLAR_MODEL")
@@ -16,6 +15,7 @@ class Config:
 
 
 REPORT_INSTALLED = bool(importlib.util.find_spec("pyroll.report"))
+
 
 if REPORT_INSTALLED:
     from . import report

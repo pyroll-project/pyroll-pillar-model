@@ -3,7 +3,6 @@ import shapely
 import numpy as np
 
 from scipy.optimize import fsolve
-
 from pyroll.core import Profile, Hook
 
 
