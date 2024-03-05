@@ -1,8 +1,5 @@
 import numpy as np
 import matplotlib.pyplot as plt
-import matplotlib.animation as mpl_ani
-from matplotlib import cm
-from matplotlib.ticker import LinearLocator
 import plotly.graph_objects as go
 import plotly.io as pio
 
@@ -192,3 +189,4 @@ def roll_pass_velocity_profile(unit: Unit):
         html_string = pio.to_html(fig, full_html=False, include_plotlyjs='cdn')
 
         return html_string
+
