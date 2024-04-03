@@ -36,6 +36,8 @@ class PillarDiskElement(RollPass.DiskElement):
     pillar_velocities = Hook[np.ndarray]()
     """Array of velocity values for each pillar."""
 
+    pillar_angles = Hook[np.ndarray]()
+    """Array of pillars' angles towards the roll.'"""
 
 pyroll.core.root_hooks.add(pyroll.core.RollPass.DiskElement.OutProfile.pillars)
 pyroll.core.root_hooks.add(pyroll.core.RollPass.DiskElement.OutProfile.pillar_heights)
