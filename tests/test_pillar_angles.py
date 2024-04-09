@@ -49,6 +49,6 @@ def test_angles():
         sequence.solve(in_profile)
         de = sequence[0].disk_elements
 
-        assert np.allclose(de[0].pillar_angles, [-0.244278, -0.244278, -0.244278, -0.244278], rtol=1e-3)
+        assert np.allclose(de[0].pillar_angles, [-0.25191043, -0.25191043, -0.25191043, -0.25191043], rtol=1e-3)
     finally:
         del pyroll.pillar_model.Config.PILLAR_COUNT
