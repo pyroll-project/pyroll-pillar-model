@@ -29,6 +29,9 @@ class PillarProfile(Profile):
     pillar_areas = Hook[np.ndarray]()
     """Array of the pillar section areas (numerical value)."""
 
+    pillar_latitudinal_angles = Hook[np.ndarray]()
+    """Array of pillars' angles between pillars in width (z) direction."""
+
 
 @PillarProfile.pillars
 def pillars_equidistant(self: PillarProfile):
@@ -112,6 +115,13 @@ def pillar_boundary_heights(self: PillarProfile):
             for p in self.pillar_boundaries
         ]
     )
+
+
+@PillarProfile.pillar_latitudinal_angles
+def pillar_latitudinal_angles(self: PillarProfile):
+    dy = np.diff(self.pillar_boundary_heights) / 2
+
+    return np.arctan2(dy, self.pillar_widths)
 
 
 @PillarProfile.pillar_sections

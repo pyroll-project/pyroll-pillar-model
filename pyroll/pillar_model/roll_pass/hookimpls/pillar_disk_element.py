@@ -134,11 +134,14 @@ def out_cross_section(self: PillarDiskElement.OutProfile):
     )
 
 
-@PillarDiskElement.pillar_angles
-def pillar_angles(self: PillarDiskElement):
+@PillarDiskElement.pillar_longitudinal_angles
+def pillar_longitudinal_angles(self: PillarDiskElement.OutProfile):
     local_roll_radii = np.concatenate(
-        [self.roll_pass.roll.max_radius - self.roll_pass.roll.surface_interpolation(self.in_profile.x, center) for center in
+        [self.roll_pass.roll.max_radius - self.roll_pass.roll.surface_interpolation(self.out_profile.x, center) for
+         center in
          self.in_profile.pillars],
         axis=0).flatten()
 
     return np.arcsin(self.in_profile.x / local_roll_radii)
+
+
