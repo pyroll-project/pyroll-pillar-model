@@ -14,12 +14,10 @@ def pillar_spreads(self: RollPass.DiskElement):
     return self.pillar_draughts ** -0.5
 
 
-DISK_ELEMENT_COUNT = 15
-pyroll.pillar_model.Config.PILLAR_COUNT = 30
-
-
 def test_pillar_longitudinal_angles_flat():
     pyroll.pillar_model.Config.PILLAR_TYPE = "EQUIDISTANT"
+    DISK_ELEMENT_COUNT = 15
+    pyroll.pillar_model.Config.PILLAR_COUNT = 10
 
     in_profile = Profile.round(
         diameter=19.5e-3,
@@ -30,7 +28,6 @@ def test_pillar_longitudinal_angles_flat():
         density=7.5e3,
         specific_heat_capcity=690,
     )
-
 
     rp = RollPass(
         label="Flat",
@@ -47,6 +44,6 @@ def test_pillar_longitudinal_angles_flat():
     )
 
     rp.solve(in_profile)
-
-
-    assert np.isclose(rp.entry_angle, rp.disk_elements[0].in_profile.pillar_longitudinal_angles).all()
+    first_disk_element = rp.disk_elements[0]
+    angles_from_cad = [-0.23593, -0.21478, -0.15199, -0.04315, 0, 0, 0, 0, 0, 0]
+    assert np.isclose(angles_from_cad, first_disk_element.pillar_longitudinal_angles, rtol=1e-3).all()
