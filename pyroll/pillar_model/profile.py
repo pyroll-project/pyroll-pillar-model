@@ -24,10 +24,13 @@ class PillarProfile(Profile):
     """Array of the pillar boundaries' heights."""
 
     pillar_sections = Hook[np.ndarray]()
-    """Array of the pillar section areas (Polygon geometry objects)."""
+    """Array of the pillars section areas (Polygon geometry objects)."""
 
     pillar_areas = Hook[np.ndarray]()
-    """Array of the pillar section areas (numerical value)."""
+    """Array of the pillars section areas (numerical value)."""
+
+    pillars_flow_stress = Hook[np.ndarray]()
+    """Array of the pillars flow stress values."""
 
 
 @PillarProfile.pillars
@@ -133,3 +136,10 @@ def pillar_sections(self: PillarProfile):
 @PillarProfile.pillar_areas
 def pillar_areas(self: PillarProfile):
     return np.array([section.area for section in self.pillar_sections])
+
+
+@PillarProfile.pillars_flow_stress
+def default_flow_stress_from_single_numeric(self: PillarProfile):
+    from . import Config
+    if isinstance(self.flow_stress, float):
+        return np.full(Config.PILLAR_COUNT, self.flow_stress)

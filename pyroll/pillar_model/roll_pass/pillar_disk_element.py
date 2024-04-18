@@ -36,17 +36,20 @@ class PillarDiskElement(RollPass.DiskElement):
     pillar_velocities = Hook[np.ndarray]()
     """Array of velocity values for each pillar."""
 
-    pillars_flow_stress = Hook[np.ndarray]()
-    """Array of flow stress values for each pillar."""
-
     pillars_altitudinal_stress = Hook[np.ndarray]()
     """"Array of altitudinal stress values for each pillar."""
 
     pillars_longitudinal_stress = Hook[np.ndarray]()
     """"Array of longitudinal stress values for each pillar."""
 
+    pillar_longitudinal_shear_stress = Hook[np.ndarray]()
+    """Array of longitudinal shear stress values for each pillar."""
+
     pillars_latitudinal_stress = Hook[np.ndarray]()
     """"Array of latitudinal stress values for each pillar."""
+
+    pillars_latitudinal_shear_stress = Hook[np.ndarray]()
+    """Array of latitudinal shear stress values for each pillar."""
 
     pillars_equivalent_stress = Hook[np.ndarray]()
     """"Array of equivalent stress values for each pillar."""
@@ -54,9 +57,8 @@ class PillarDiskElement(RollPass.DiskElement):
     pillars_hydrostatic_stress = Hook[np.ndarray]()
     """"Array of hydrostatic stress values for each pillar."""
 
-
-
-
+    pillar_normal_stress = Hook[np.ndarray]()
+    """Array of normal stress values for each pillar."""
 
 
 pyroll.core.root_hooks.add(pyroll.core.RollPass.DiskElement.OutProfile.pillars)
