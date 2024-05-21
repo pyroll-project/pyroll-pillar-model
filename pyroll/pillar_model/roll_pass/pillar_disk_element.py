@@ -39,7 +39,6 @@ class PillarDiskElement(RollPass.DiskElement):
     pillar_longitudinal_angles = Hook[np.ndarray]()
     """Array of pillars' angles between pillar and tooling (roll) in rolling (x) direction."""
 
-
     pillars_altitudinal_stress = Hook[np.ndarray]()
     """"Array of altitudinal stress values for each pillar."""
 
@@ -61,7 +60,7 @@ class PillarDiskElement(RollPass.DiskElement):
     pillars_hydrostatic_stress = Hook[np.ndarray]()
     """"Array of hydrostatic stress values for each pillar."""
 
-    pillar_normal_stress = Hook[np.ndarray]()
+    pillars_normal_stress = Hook[np.ndarray]()
     """Array of normal stress values for each pillar."""
 
 
