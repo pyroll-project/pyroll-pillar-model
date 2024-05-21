@@ -26,6 +26,9 @@ class PillarProfile(Profile):
     pillar_sections = Hook[np.ndarray]()
     """Array of the pillars section areas (Polygon geometry objects)."""
 
+    pillar_strains = Hook[np.ndarray]()
+    """Array of the pillars strain values."""
+
     pillar_areas = Hook[np.ndarray]()
     """Array of the pillars section areas (numerical value)."""
 

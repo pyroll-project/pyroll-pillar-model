@@ -77,6 +77,11 @@ def pillar_strains(self: PillarDiskElement):
         2 / 3 * (self.pillar_log_elongations ** 2 + self.pillar_log_spreads ** 2 + self.pillar_log_draughts ** 2))
 
 
+@PillarDiskElement.OutProfile.pillar_strains
+def pillar_strains(self: PillarDiskElement.OutProfile):
+    return self.disk_element.in_profile.pillar_strains + self.disk_element.pillar_strains
+
+
 @PillarDiskElement.pillar_strain_rates
 def pillar_strain_rates(self: PillarDiskElement):
     local_roll_radii = np.concatenate(
