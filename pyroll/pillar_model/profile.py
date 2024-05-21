@@ -38,6 +38,30 @@ class PillarProfile(Profile):
     pillar_latitudinal_angles = Hook[np.ndarray]()
     """Array of pillars' angles between pillars in width (z) direction."""
 
+    pillars_altitudinal_stress = Hook[np.ndarray]()
+    """"Array of altitudinal stress values for each pillar."""
+
+    pillars_longitudinal_stress = Hook[np.ndarray]()
+    """"Array of longitudinal stress values for each pillar."""
+
+    pillars_longitudinal_shear_stress = Hook[np.ndarray]()
+    """Array of longitudinal shear stress values for each pillar."""
+
+    pillars_latitudinal_stress = Hook[np.ndarray]()
+    """"Array of latitudinal stress values for each pillar."""
+
+    pillars_latitudinal_shear_stress = Hook[np.ndarray]()
+    """Array of latitudinal shear stress values for each pillar."""
+
+    pillars_equivalent_stress = Hook[np.ndarray]()
+    """"Array of equivalent stress values for each pillar."""
+
+    pillars_hydrostatic_stress = Hook[np.ndarray]()
+    """"Array of hydrostatic stress values for each pillar."""
+
+    pillars_normal_stress = Hook[np.ndarray]()
+    """Array of normal stress values for each pillar."""
+
 
 @PillarProfile.pillars
 def pillars_equidistant(self: PillarProfile):
