@@ -139,3 +139,7 @@ def out_cross_section(self: PillarDiskElement.OutProfile):
     )
 
 
+@PillarDiskElement.pillar_longitudinal_angles
+def pillar_longitudinal_angles(self: PillarDiskElement):
+    dy = (self.out_profile.pillar_heights - self.in_profile.pillar_heights) / 2
+    return np.arctan2(dy, self.length)
