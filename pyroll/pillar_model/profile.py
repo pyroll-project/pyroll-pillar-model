@@ -112,7 +112,7 @@ def pillars_uniform(self: PillarProfile):
 def pillar_boundaries(self: PillarProfile):
     a = np.zeros(len(self.pillars) + 1)
     a[1:-1] = (self.pillars[1:] + self.pillars[:-1]) / 2
-    a[-1] = self.width / 2
+    a[-1] = a[-2] + 2 * (self.pillars[-1] - a[-2])
     return a
 
 
