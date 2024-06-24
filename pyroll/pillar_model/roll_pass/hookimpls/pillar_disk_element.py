@@ -145,6 +145,6 @@ def pillar_longitudinal_angles(self: PillarDiskElement):
     return np.arctan2(dy, self.length)
 
 
-@PillarDiskElement.pillar_height_derivatives
-def pillar_height_derivatives(self: PillarDiskElement):
+@PillarDiskElement.pillar_longitudinal_height_derivatives
+def pillar_longitudinal_height_derivatives(self: PillarDiskElement):
     return (self.out_profile.pillar_heights - self.in_profile.pillar_heights) / self.length
