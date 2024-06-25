@@ -39,7 +39,7 @@ class PillarDiskElement(RollPass.DiskElement):
     pillar_longitudinal_angles = Hook[np.ndarray]()
     """Array of pillars' angles between pillar and tooling (roll) in rolling (x) direction."""
 
-    pillar_height_derivatives = Hook[np.ndarray]()
+    pillar_longitudinal_height_derivatives = Hook[np.ndarray]()
     """Arrays of pillar height derivatives in rolling (x) direction."""
 
 

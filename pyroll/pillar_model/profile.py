@@ -38,6 +38,9 @@ class PillarProfile(Profile):
     pillar_latitudinal_angles = Hook[np.ndarray]()
     """Array of pillars' angles between pillars in width (z) direction."""
 
+    pillar_latitudinal_height_derivatives = Hook[np.ndarray]()
+    """Array of pillars' height derivatives width (z) direction.'"""
+
     pillars_altitudinal_stress = Hook[np.ndarray]()
     """"Array of altitudinal stress values for each pillar."""
 
@@ -152,6 +155,13 @@ def pillar_latitudinal_angles(self: PillarProfile):
     dy = np.diff(self.pillar_boundary_heights) / 2
 
     return np.arctan2(dy, self.pillar_widths)
+
+
+@PillarProfile.pillar_latitudinal_height_derivatives
+def pillar_latitudinal_height_derivatives(self: PillarProfile):
+    dy = np.diff(self.pillar_boundary_heights)
+
+    return dy / self.pillar_widths
 
 
 @PillarProfile.pillar_sections
