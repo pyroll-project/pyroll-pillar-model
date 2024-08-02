@@ -4,7 +4,6 @@ from pathlib import Path
 
 from pyroll.core import Profile, PassSequence, RollPass, Roll, ConstrictedBoxGroove
 import pyroll.pillar_model
-import pyroll.local_velocity
 
 
 @RollPass.DiskElement.pillar_spreads

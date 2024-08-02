@@ -188,5 +188,16 @@ def pillar_areas(self: PillarProfile):
 @PillarProfile.pillars_flow_stress
 def default_flow_stress_from_single_numeric(self: PillarProfile):
     from . import Config
-    if isinstance(self.flow_stress, float):
+    if self.has_set_or_cached("pillars_flow_stress"):
+        return self.pillars_flow_stress
+    elif self.has_value("flow_stress"):
         return np.full(Config.PILLAR_COUNT, self.flow_stress)
+
+
+@PillarProfile.pillar_strains
+def default_pillar_strains_from_single_numeric(self: PillarProfile):
+    from . import Config
+    if self.has_set_or_cached("pillar_strains"):
+        return self.pillar_strains
+    elif self.has_value("strain"):
+        return np.full(Config.PILLAR_COUNT, self.strain)

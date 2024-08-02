@@ -1,6 +1,5 @@
 import numpy as np
 import pyroll.pillar_model
-import pyroll.local_velocity
 
 from typing import Union
 from pyroll.pillar_model.profile import PillarProfile
