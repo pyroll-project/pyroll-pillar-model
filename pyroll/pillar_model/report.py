@@ -3,7 +3,6 @@ import matplotlib.pyplot as plt
 import plotly.graph_objects as go
 import plotly.io as pio
 
-
 from pyroll.core import Unit, RollPass
 from pyroll.report import hookimpl
 import matplotlib.animation as mpl_ani
@@ -165,6 +164,35 @@ def roll_pass_forming_values_distribution(unit: Unit):
 
 
 @hookimpl(specname="unit_plot")
+def roll_pass_velocity_plot(unit: RollPass):
+    if isinstance(unit, RollPass) and unit.disk_elements:
+        fig: plt.Figure = plt.figure()
+        ax: plt.Axes = fig.subplots()
+        ax.grid(True)
+        ax.set_xlabel("x")
+        ax.set_ylabel("velocity")
+        ax.set_title("Workpiece Velocity Evolution")
+
+        def _gen():
+            yield unit.disk_elements[0].in_profile.x, unit.disk_elements[0].in_profile.velocity
+            for de in unit.disk_elements:
+                yield de.out_profile.x, de.out_profile.velocity
+
+        x, profile_velocity = np.array(list(_gen())).T
+        ax.plot(x, profile_velocity, label="workpiece velocity")
+
+        alpha = np.arcsin(-x / unit.roll.working_radius)
+        horizontal_working_roll_velocity = 2 * np.pi * unit.roll.rotational_frequency * unit.roll.working_radius * np.cos(
+            alpha)
+
+        ax.plot(x, horizontal_working_roll_velocity, label="working roll velocity")
+        ax.axvline(unit.roll.neutral_point, label="neutral plane", ls="--", c="green")
+
+        ax.legend()
+        return fig
+
+
+@hookimpl(specname="unit_plot")
 def roll_pass_velocity_profile(unit: Unit):
     if isinstance(unit, RollPass) and unit.disk_elements:
         rp: RollPass = unit
@@ -189,4 +217,3 @@ def roll_pass_velocity_profile(unit: Unit):
         html_string = pio.to_html(fig, full_html=False, include_plotlyjs='cdn')
 
         return html_string
-
