@@ -217,3 +217,4 @@ def roll_pass_velocity_profile(unit: Unit):
         html_string = pio.to_html(fig, full_html=False, include_plotlyjs='cdn')
 
         return html_string
+
