@@ -83,6 +83,23 @@ def roll_force_disks(self: RollPass):
     ]) / 2  # /2 since two rolls
 
 
+@RollPass.DiskElement.velocity
+def disk_velocity(self: RollPass.DiskElement):
+    return self.in_profile.velocity
+
+
+@RollPass.DiskElement.InProfile.velocity
+def disk_in_velocity(self: RollPass.DiskElement.InProfile):
+    if self.disk_element is self.roll_pass.disk_elements[0]:
+        return self.roll_pass.in_profile.velocity
+
+
+@RollPass.DiskElement.OutProfile.velocity
+def disk_out_velocity(self: RollPass.DiskElement.OutProfile):
+    de = self.disk_element
+    return de.in_profile.velocity * de.in_profile.cross_section.area / self.cross_section.area
+
+
 @RollPass.mean_elongation
 def mean_elongation(self: RollPass):
     return np.sum(self.out_profile.pillar_areas) / np.sum(self.out_profile.pillar_areas / self.total_pillar_elongations)
