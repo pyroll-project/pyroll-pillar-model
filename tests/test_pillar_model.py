@@ -124,3 +124,34 @@ def test_pillar_sections_uniform(p: Union[PillarProfile, Profile]):
     finally:
         del pyroll.pillar_model.Config.PILLAR_COUNT
         del pyroll.pillar_model.Config.PILLAR_TYPE
+
+
+@pytest.mark.parametrize(
+    "p", [
+        Profile.round(radius=10),
+        Profile.square(side=10, corner_radius=1),
+        Profile.box(height=10, width=5, corner_radius=1),
+        Profile.diamond(height=5, width=10, corner_radius=1)
+    ]
+)
+def test_uniform_pillar_sections_area(p: Union[PillarProfile, Profile]):
+    pyroll.pillar_model.Config.PILLAR_COUNT = 4
+    pyroll.pillar_model.Config.PILLAR_TYPE = "UNIFORM"
+
+    assert np.all(np.isclose(p.pillar_areas, p.pillar_areas[0], rtol=1e-3))
+
+
+@pytest.mark.parametrize(
+    "p", [
+        Profile.round(radius=10),
+        Profile.square(side=10, corner_radius=1),
+        Profile.box(height=10, width=5, corner_radius=1),
+        Profile.diamond(height=5, width=10, corner_radius=1)
+    ]
+)
+def test_equidistant_pillar_widths(p: Union[PillarProfile, Profile]):
+    pyroll.pillar_model.Config.PILLAR_COUNT = 4
+    pyroll.pillar_model.Config.PILLAR_TYPE = "EQUIDISTANT"
+
+    assert np.isclose(p.pillar_widths[0], p.pillar_widths[-1] / 2, rtol=1e-3)
+    assert np.all(np.isclose(p.pillar_widths[1:], p.pillar_widths[1], rtol=1e-3))
