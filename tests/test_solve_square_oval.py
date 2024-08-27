@@ -12,13 +12,13 @@ def pillar_spreads(self: RollPass.DiskElement):
     return self.pillar_draughts ** -0.8
 
 
-DISK_ELEMENT_COUNT = 15
-pyroll.pillar_model.Config.PILLAR_COUNT = 30
 
 
-def test_solve_square_oval_equidistant_pillars(tmp_path: Path, caplog):
+
+def test_solve_square_oval_equidistant_pillars(tmp_path: Path, caplog, monkeypatch):
     caplog.set_level(logging.INFO, logger="pyroll")
-    pyroll.pillar_model.Config.PILLAR_TYPE = "EQUIDISTANT"
+    monkeypatch.setenv("PILLAR_TYPE", "EQUIDISTANT")
+    monkeypatch.setenv("PILLAR_COUNT", 30)
 
     in_profile = Profile.square(
         side=24e-3,
@@ -45,7 +45,7 @@ def test_solve_square_oval_equidistant_pillars(tmp_path: Path, caplog):
                     neutral_point=-20e-3
                 ),
                 gap=2e-3,
-                disk_element_count=DISK_ELEMENT_COUNT,
+                disk_element_count=15,
             ),
 
         ]
@@ -68,10 +68,10 @@ def test_solve_square_oval_equidistant_pillars(tmp_path: Path, caplog):
         pass
 
 
-def test_solve_square_oval_uniform_pillars(tmp_path: Path, caplog):
+def test_solve_square_oval_uniform_pillars(tmp_path: Path, caplog, monkeypatch):
     caplog.set_level(logging.INFO, logger="pyroll")
-
-    pyroll.pillar_model.Config.PILLAR_TYPE = "UNIFORM"
+    monkeypatch.setenv("PILLAR_TYPE", "UNIFORM")
+    monkeypatch.setenv("PILLAR_COUNT", 30)
 
     in_profile = Profile.square(
         side=24e-3,
@@ -98,7 +98,7 @@ def test_solve_square_oval_uniform_pillars(tmp_path: Path, caplog):
                     neutral_point=-20e-3
                 ),
                 gap=2e-3,
-                disk_element_count=DISK_ELEMENT_COUNT,
+                disk_element_count=15,
             ),
         ]
     )

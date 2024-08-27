@@ -12,13 +12,10 @@ def pillar_spreads(self: RollPass.DiskElement):
     return self.pillar_draughts ** -0.3
 
 
-DISK_ELEMENT_COUNT = 15
-pyroll.pillar_model.Config.PILLAR_COUNT = 30
-
-
-def test_solve_round_oval_equidistant(tmp_path: Path, caplog):
+def test_solve_round_oval_equidistant(tmp_path: Path, caplog, monkeypatch):
     caplog.set_level(logging.INFO, logger="pyroll")
-    pyroll.pillar_model.Config.PILLAR_TYPE = "EQUIDISTANT"
+    monkeypatch.setenv("PILLAR_TYPE", "UNIFORM")
+    monkeypatch.setenv("PILLAR_COUNT", 30)
 
     in_profile = Profile.round(
         diameter=19.5e-3,
@@ -45,7 +42,7 @@ def test_solve_round_oval_equidistant(tmp_path: Path, caplog):
                     neutral_point=-20e-3
                 ),
                 gap=4e-3,
-                disk_element_count=DISK_ELEMENT_COUNT,
+                disk_element_count=15,
             ),
 
         ]
@@ -69,9 +66,10 @@ def test_solve_round_oval_equidistant(tmp_path: Path, caplog):
         pass
 
 
-def test_solve_round_oval_uniform(tmp_path: Path, caplog):
+def test_solve_round_oval_uniform(tmp_path: Path, caplog, monkeypatch):
     caplog.set_level(logging.INFO, logger="pyroll")
-    pyroll.pillar_model.Config.PILLAR_TYPE = "UNIFORM"
+    monkeypatch.setenv("PILLAR_TYPE", "UNIFORM")
+    monkeypatch.setenv("PILLAR_COUNT", 30)
 
     in_profile = Profile.round(
         diameter=19.5e-3,
@@ -98,7 +96,7 @@ def test_solve_round_oval_uniform(tmp_path: Path, caplog):
                     neutral_point=-20e-3
                 ),
                 gap=4e-3,
-                disk_element_count=DISK_ELEMENT_COUNT,
+                disk_element_count=15,
             ),
 
         ]
