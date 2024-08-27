@@ -28,7 +28,7 @@ def test_pillar_boundaries():
 
         p: Union[PillarProfile, Profile] = Profile.box(width=14, height=1)
 
-        assert np.allclose(p.pillar_boundaries, [0, 1, 3, 5, 7], rtol=1e-3)
+        assert np.allclose(p.pillar_boundaries, [-1, 1, 3, 5, 7], rtol=1e-3)
     finally:
         del pyroll.pillar_model.Config.PILLAR_COUNT
 
@@ -54,7 +54,8 @@ def test_pillar_heights_square():
 def test_pillar_boundary_heights_box():
     p: Union[PillarProfile, Profile] = Profile.box(width=14, height=1)
 
-    assert np.allclose(p.pillar_boundary_heights, 1, rtol=1e-3)
+    assert np.allclose(p.pillar_boundary_heights[:-1], 1, rtol=1e-3)
+    assert np.allclose(p.pillar_boundary_heights[-1], 0, rtol=1e-3)
 
 
 def test_pillar_boundary_heights_square():
@@ -64,7 +65,7 @@ def test_pillar_boundary_heights_square():
 
         p: Union[PillarProfile, Profile] = Profile.square(diagonal=14)
 
-        assert np.allclose(p.pillar_boundary_heights, [14, 12, 8, 4, 0], rtol=1e-3)
+        assert np.allclose(p.pillar_boundary_heights, [12, 12, 8, 4, 0], rtol=1e-3)
     finally:
         del pyroll.pillar_model.Config.PILLAR_COUNT
 
@@ -153,8 +154,7 @@ def test_equidistant_pillar_widths(p: Union[PillarProfile, Profile]):
     pyroll.pillar_model.Config.PILLAR_COUNT = 4
     pyroll.pillar_model.Config.PILLAR_TYPE = "EQUIDISTANT"
 
-    assert np.isclose(p.pillar_widths[0], p.pillar_widths[-1] / 2, rtol=1e-3)
-    assert np.all(np.isclose(p.pillar_widths[1:], p.pillar_widths[1], rtol=1e-3))
+    assert np.all(np.isclose(p.pillar_widths, p.pillar_widths[0], rtol=1e-3))
 
 @pytest.mark.parametrize(
     "p", [

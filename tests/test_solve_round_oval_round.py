@@ -10,7 +10,7 @@ import pyroll.pillar_model
 
 @RollPass.DiskElement.pillar_spreads
 def pillar_spreads(self: RollPass.DiskElement):
-    return self.pillar_draughts ** -0.5
+    return self.pillar_draughts ** -0.3
 
 
 DISK_ELEMENT_COUNT = 15

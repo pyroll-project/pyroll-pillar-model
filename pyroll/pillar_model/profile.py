@@ -66,16 +66,16 @@ class PillarProfile(Profile):
     """Array of normal stress values for each pillar."""
 
 
-@PillarProfile.pillars
-def pillars_equidistant(self: PillarProfile):
+@PillarProfile.pillar_widths
+def pillar_widths_equidistant(self: PillarProfile):
     from . import Config
     if Config.PILLAR_TYPE.lower() == "equidistant":
         dw = self.width / 2 / (Config.PILLAR_COUNT - 0.5)
-        return np.arange(0, self.width / 2, dw)
+        return np.full(Config.PILLAR_COUNT, dw)
 
 
-@PillarProfile.pillars
-def pillars_uniform(self: PillarProfile):
+@PillarProfile.pillar_widths
+def pillar_widths_uniform(self: PillarProfile):
     from . import Config
     if Config.PILLAR_TYPE.lower() == "uniform":
         dw = self.width / 2 / (Config.PILLAR_COUNT - 0.5)
@@ -108,14 +108,14 @@ def pillars_uniform(self: PillarProfile):
 
         sol = fsolve(fun, x0=equidistant_pillar_widths)
 
-        return p_centers(sol)
+        return sol
 
 
 @PillarProfile.pillar_boundaries
 def pillar_boundaries(self: PillarProfile):
-    a = np.zeros(len(self.pillars) + 1)
-    a[1:-1] = (self.pillars[1:] + self.pillars[:-1]) / 2
-    a[-1] = a[-2] + 2 * (self.pillars[-1] - a[-2])
+    a = np.zeros(len(self.pillar_widths) + 1)
+    a[1:] = np.cumsum(self.pillar_widths) - self.pillar_widths[0] / 2
+    a[0] = -a[1]
     return a
 
 
@@ -132,9 +132,11 @@ def pillar_heights(self: PillarProfile):
     )
 
 
-@PillarProfile.pillar_widths
-def pillar_widths(self: PillarProfile):
-    return self.pillar_boundaries[1:] - self.pillar_boundaries[:-1]
+@PillarProfile.pillars
+def pillars(self: PillarProfile):
+    a = np.zeros(len(self.pillar_boundaries) - 1)
+    a[1:] = (self.pillar_boundaries[2:] + self.pillar_boundaries[1:-1]) / 2
+    return a
 
 
 @PillarProfile.pillar_boundary_heights
@@ -182,7 +184,7 @@ def pillar_sections(self: PillarProfile):
 
 @PillarProfile.pillar_areas
 def pillar_areas(self: PillarProfile):
-    return np.array([section.area for section in self.pillar_sections])
+    return self.pillar_widths * self.pillar_heights
 
 
 @PillarProfile.pillars_flow_stress
