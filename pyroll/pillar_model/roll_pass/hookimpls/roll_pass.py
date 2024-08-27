@@ -56,10 +56,8 @@ def total_pillar_strain_rates(self: RollPass):
 
 @RollPass.DiskElement.contact_area
 def disk_contact_area(self: RollPass.DiskElement):
-    contact_width = (
-            np.sum(self.in_profile.pillar_widths[self.pillars_in_contact])
-            + np.sum(self.out_profile.pillar_widths[self.pillars_in_contact])
-    )  # /2 missing since pillars only on half profile
+    pillar_contact_widths = self.in_profile.pillar_widths[self.pillars_in_contact] + self.out_profile.pillar_widths[self.pillars_in_contact]
+    contact_width = np.sum(pillar_contact_widths) - pillar_contact_widths[0] / 2  # /2 missing since pillars only on half profile
     return contact_width * self.length * 2  # *2 since two rolls
 
 
