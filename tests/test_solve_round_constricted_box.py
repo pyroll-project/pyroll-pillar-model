@@ -63,7 +63,7 @@ def test_solve_round_constricted_box_equidistant(tmp_path: Path, caplog, monkeyp
 
         report = report(sequence)
         f = tmp_path / "report.html"
-        f.write_text(report)
+        f.write_text(report, encoding="utf-8")
         webbrowser.open(f.as_uri())
 
     except ImportError:
@@ -122,7 +122,7 @@ def test_solve_round_constricted_box_uniform(tmp_path: Path, caplog, monkeypatch
 
         report = report(sequence)
         f = tmp_path / "report.html"
-        f.write_text(report)
+        f.write_text(report, encoding="utf-8")
         webbrowser.open(f.as_uri())
 
     except ImportError:

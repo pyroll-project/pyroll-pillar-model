@@ -61,7 +61,7 @@ def test_solve_square_oval_equidistant_pillars(tmp_path: Path, caplog, monkeypat
 
         report = report(sequence)
         f = tmp_path / "report.html"
-        f.write_text(report)
+        f.write_text(report, encoding="utf-8")
         webbrowser.open(f.as_uri())
 
     except ImportError:
@@ -114,7 +114,7 @@ def test_solve_square_oval_uniform_pillars(tmp_path: Path, caplog, monkeypatch):
 
         report = report(sequence)
         f = tmp_path / "report.html"
-        f.write_text(report)
+        f.write_text(report, encoding="utf-8")
         webbrowser.open(f.as_uri())
 
     except ImportError:
