@@ -15,6 +15,7 @@ dependencies = [
     "pytest ~= 7.0",
     "matplotlib ~= 3.6",
     "pyroll-report ~= 3.0",
+
 ]
 
 [envs.docs]

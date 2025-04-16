@@ -47,14 +47,14 @@ class PillarProfile(Profile):
     pillars_longitudinal_stress = Hook[np.ndarray]()
     """"Array of longitudinal stress values for each pillar."""
 
-    pillars_longitudinal_shear_stress = Hook[np.ndarray]()
-    """Array of longitudinal shear stress values for each pillar."""
+    pillars_longitudinal_friction_stress = Hook[np.ndarray]()
+    """Array of longitudinal friction stress values for each pillar."""
 
     pillars_latitudinal_stress = Hook[np.ndarray]()
     """"Array of latitudinal stress values for each pillar."""
 
-    pillars_latitudinal_shear_stress = Hook[np.ndarray]()
-    """Array of latitudinal shear stress values for each pillar."""
+    pillars_latitudinal_friction_stress = Hook[np.ndarray]()
+    """Array of latitudinal friction stress values for each pillar."""
 
     pillars_equivalent_stress = Hook[np.ndarray]()
     """"Array of equivalent stress values for each pillar."""
