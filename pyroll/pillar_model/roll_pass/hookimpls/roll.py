@@ -12,6 +12,8 @@ def total_pillar_contact_lengths(self: RollPass.Roll):
             if de.pillars_in_contact[i]:
                 contact_lengths[i] += de.length
 
+    return contact_lengths
+
 
 @RollPass.Roll.total_pillar_contact_areas
 def roll_contact_area(self: RollPass.Roll):
@@ -29,8 +31,3 @@ def roll_contact_area(self: RollPass.Roll):
 @RollPass.Roll.contact_area
 def roll_contact_area(self: RollPass.Roll):
     return self.roll_pass.contact_area / 2
-
-
-@RollPass.Roll.contact_length
-def contact_length(self: RollPass.Roll):
-    return np.mean(self.total_pillar_contact_lengths)
