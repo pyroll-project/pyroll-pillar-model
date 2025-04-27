@@ -126,7 +126,7 @@ def out_cross_section(self: PillarDiskElement.OutProfile):
     coords4 *= -1
     outer = self.pillar_boundaries[-1]
     return shapely.Polygon(
-        np.row_stack(
+        np.vstack(
             [
                 coords1,
                 [(outer, 0)],
