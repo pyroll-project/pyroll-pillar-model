@@ -30,6 +30,9 @@ RollPass.total_pillar_strain_rates = Hook[np.ndarray]()
 RollPass.Roll.total_pillar_contact_lengths = Hook[np.ndarray]()
 """Array of total contact length of each pillar in contact."""
 
+RollPass.Roll.total_pillar_contact_areas = Hook[np.ndarray]()
+"""Array of total contact area of each pillar in contact."""
+
 RollPass.mean_elongation = Hook[float]()
 """Mean elongation of the profile in the roll pass."""
 
