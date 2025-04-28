@@ -1,5 +1,3 @@
-from pathlib import Path
-from typing import Any
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -12,8 +10,8 @@ from pyroll.pillar_model.profile import PillarProfile
 
 pyroll.pillar_model.Config.PILLAR_COUNT = 5
 pyroll.pillar_model.Config.PILLAR_TYPE = "UNIFORM"
-@pytask.mark.produces([f"pillar_profile_uniform.{s}" for s in ["png", "svg", "pdf"]])
-def task_pillar_profile_uniform(produces: dict[Any, Path]):
+
+def task_pillar_profile_uniform(produces=[f"pillar_profile_uniform.{s}" for s in ["png", "svg", "pdf"]]):
 
     p: Profile | PillarProfile = Profile.diamond(width=10, height=5, corner_radius=1)
 
@@ -43,7 +41,7 @@ def task_pillar_profile_uniform(produces: dict[Any, Path]):
 
     fig.tight_layout()
 
-    for f in produces.values():
+    for f in produces:
         fig.savefig(f)
 
     plt.close(fig)

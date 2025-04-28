@@ -1,8 +1,4 @@
-from pathlib import Path
-from typing import Any
-
 import matplotlib.pyplot as plt
-import numpy as np
 import pytask
 
 from pyroll.core import Profile, RollPass, Roll, SquareGroove
@@ -18,8 +14,7 @@ def pillar_spreads(self: RollPass.DiskElement):
     return self.pillar_draughts ** -1.1
 
 
-@pytask.mark.produces([f"pillar_disk_element.{s}" for s in ["png", "svg", "pdf"]])
-def task_pillar_disk_element(produces: dict[Any, Path]):
+def task_pillar_disk_element(produces=[f"pillar_disk_element.{s}" for s in ["png", "svg", "pdf"]]):
     p: Profile | PillarProfile = Profile.diamond(width=10, height=5, corner_radius=1, flow_stress=1, strain=0)
 
     rp = RollPass(
@@ -68,7 +63,7 @@ def task_pillar_disk_element(produces: dict[Any, Path]):
 
     fig.tight_layout()
 
-    for f in produces.values():
+    for f in produces:
         fig.savefig(f)
 
     plt.close(fig)

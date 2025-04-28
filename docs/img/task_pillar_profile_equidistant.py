@@ -1,6 +1,3 @@
-from pathlib import Path
-from typing import Any
-
 import matplotlib.pyplot as plt
 import numpy as np
 import pytask
@@ -13,8 +10,9 @@ from pyroll.pillar_model.profile import PillarProfile
 pyroll.pillar_model.Config.PILLAR_COUNT = 5
 
 
-@pytask.mark.produces([f"pillar_profile_equidistant.{s}" for s in ["png", "svg", "pdf"]])
-def task_pillar_profile_equidistant(produces: dict[Any, Path]):
+def task_pillar_profile_equidistant(
+        produces=[f"pillar_profile_equidistant.{s}" for s in ["png", "svg", "pdf"]]
+):
     p: Profile | PillarProfile = Profile.diamond(width=10, height=5, corner_radius=1)
 
     fig: plt.Figure = plt.figure(figsize=(6.4, 3.5), dpi=600)
@@ -43,9 +41,7 @@ def task_pillar_profile_equidistant(produces: dict[Any, Path]):
 
     fig.tight_layout()
 
-    for f in produces.values():
+    for f in produces:
         fig.savefig(f)
 
     plt.close(fig)
-
-
