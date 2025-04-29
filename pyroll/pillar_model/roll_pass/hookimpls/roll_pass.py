@@ -119,3 +119,11 @@ def pillar_spread_correction_coefficients(self: RollPass):
     corr_exp = updated_correction_coefficients_to_current_iteration_loop()
     coeff = calculate_coefficients(correction_coefficients=corr_exp)
     return coeff
+
+@RollPass.pillar_corner_correction_strains
+def pillar_corner_correction_strains(self: RollPass):
+    from ... import Config
+    if Config.CORNER_CORRECTION:
+        return np.tan(self.roll.pillar_entry_angles) ** 2 / (2 * np.sqrt(3))
+    else:
+        return np.zeros_like(self.in_profile.pillars)

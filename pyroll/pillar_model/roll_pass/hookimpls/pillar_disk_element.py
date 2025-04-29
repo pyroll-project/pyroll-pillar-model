@@ -73,8 +73,20 @@ def pillar_log_elongations(self: PillarDiskElement):
 
 @PillarDiskElement.pillar_strains
 def pillar_strains(self: PillarDiskElement):
-    return np.sqrt(
+    if self == self.roll_pass.disk_elements[0]:
+        previous_contact = np.full_like(self.pillars_in_contact, False)
+    else:
+        previous_disk_element = self.prev_of(unit_type=type(self))
+        previous_contact = previous_disk_element.pillars_in_contact
+
+    strains = np.sqrt(
         2 / 3 * (self.pillar_log_elongations ** 2 + self.pillar_log_spreads ** 2 + self.pillar_log_draughts ** 2))
+
+    for i in range(len(self.in_profile.pillars)):
+        if self.pillars_in_contact[i] and not previous_contact[i]:
+            strains[i] = strains[i] + self.roll_pass.pillar_corner_correction_strains[i]
+
+    return strains
 
 
 @PillarDiskElement.OutProfile.pillar_strains
@@ -127,15 +139,15 @@ def out_cross_section(self: PillarDiskElement.OutProfile):
     outer = self.pillar_boundaries[-1]
 
     cs = shapely.Polygon(np.vstack(
-            [
-                coords1,
-                [(outer, 0)],
-                coords2,
-                coords3,
-                [(-outer, 0)],
-                coords4,
-            ]
-        )
+        [
+            coords1,
+            [(outer, 0)],
+            coords2,
+            coords3,
+            [(-outer, 0)],
+            coords4,
+        ]
+    )
     )
     return cs
 
