@@ -2,19 +2,19 @@ import numpy as np
 import pyroll.pillar_model
 
 
-from pyroll.core import Profile, RollPass, Roll, FlatGroove
+from pyroll.core import Profile, RollPass, Roll, FlatGroove, root_hooks
 
-@RollPass.DiskElement.pillar_spreads
 def pillar_spreads(self: RollPass.DiskElement):
     return self.pillar_draughts ** -0.5
 
 
-def test_pillar_longitudinal_angles_flat():
+def test_pillar_entry_angles_flat():
     pyroll.pillar_model.Config.PILLAR_TYPE = "EQUIDISTANT"
-    DISK_ELEMENT_COUNT = 15
     pyroll.pillar_model.Config.PILLAR_COUNT = 10
 
-    in_profile = Profile.round(
+    with RollPass.DiskElement.pillar_spreads(pillar_spreads):
+        root_hooks.add(RollPass.DiskElement.pillar_spreads)
+        in_profile = Profile.round(
         diameter=19.5e-3,
         temperature=1200 + 273.15,
         strain=0,
@@ -24,7 +24,8 @@ def test_pillar_longitudinal_angles_flat():
         specific_heat_capcity=690,
     )
 
-    rp = RollPass(
+
+        rp = RollPass(
         label="Flat",
         roll=Roll(
             groove=FlatGroove(
@@ -35,7 +36,7 @@ def test_pillar_longitudinal_angles_flat():
             neutral_point=-20e-3
         ),
         gap=10e-3,
-        disk_element_count=DISK_ELEMENT_COUNT
+        disk_element_count=15
     )
 
     rp.solve(in_profile)
@@ -46,3 +47,5 @@ def test_pillar_longitudinal_angles_flat():
     entry_points = local_roll_radii * rp.roll.pillar_entry_angles
 
     assert np.isclose(np.abs(entry_points), rp.roll.total_pillar_contact_lengths, atol=1e-2).all()
+
+    root_hooks.remove_last(RollPass.DiskElement.pillar_spreads)
