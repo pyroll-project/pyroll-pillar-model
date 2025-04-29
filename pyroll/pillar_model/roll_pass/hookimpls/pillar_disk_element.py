@@ -101,7 +101,7 @@ def out_pillar_widths(self: PillarDiskElement.OutProfile):
 @PillarDiskElement.OutProfile.pillar_boundaries
 def out_pillar_boundaries(self: PillarDiskElement.OutProfile):
     a = np.zeros(len(self.pillar_widths) + 1)
-    a[1:] = np.cumsum(self.pillar_widths)
+    a[1:] = np.cumsum(self.pillar_widths) - self.pillar_widths[0] / 2
     return a
 
 
@@ -125,8 +125,8 @@ def out_cross_section(self: PillarDiskElement.OutProfile):
     coords4 = coords2[:-1].copy()
     coords4 *= -1
     outer = self.pillar_boundaries[-1]
-    return shapely.Polygon(
-        np.vstack(
+
+    cs = shapely.Polygon(np.vstack(
             [
                 coords1,
                 [(outer, 0)],
@@ -137,6 +137,7 @@ def out_cross_section(self: PillarDiskElement.OutProfile):
             ]
         )
     )
+    return cs
 
 
 @PillarDiskElement.pillar_longitudinal_angles

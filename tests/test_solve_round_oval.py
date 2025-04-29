@@ -1,10 +1,9 @@
 import logging
-
 import webbrowser
-from pathlib import Path
-
-from pyroll.core import Profile, PassSequence, RollPass, Roll, CircularOvalGroove
 import pyroll.pillar_model
+
+from pathlib import Path
+from pyroll.core import Profile, PassSequence, RollPass, Roll, CircularOvalGroove
 
 
 @RollPass.DiskElement.pillar_spreads
@@ -14,8 +13,8 @@ def pillar_spreads(self: RollPass.DiskElement):
 
 def test_solve_round_oval_equidistant(tmp_path: Path, caplog, monkeypatch):
     caplog.set_level(logging.INFO, logger="pyroll")
-    monkeypatch.setenv("PILLAR_TYPE", "UNIFORM")
-    monkeypatch.setenv("PILLAR_COUNT", 30)
+    monkeypatch.setattr(pyroll.pillar_model.Config,"PILLAR_TYPE", "EQUIDISTANT")
+    monkeypatch.setattr(pyroll.pillar_model.Config,"PILLAR_COUNT", 30)
 
     in_profile = Profile.round(
         diameter=19.5e-3,
@@ -68,8 +67,8 @@ def test_solve_round_oval_equidistant(tmp_path: Path, caplog, monkeypatch):
 
 def test_solve_round_oval_uniform(tmp_path: Path, caplog, monkeypatch):
     caplog.set_level(logging.INFO, logger="pyroll")
-    monkeypatch.setenv("PILLAR_TYPE", "UNIFORM")
-    monkeypatch.setenv("PILLAR_COUNT", 30)
+    monkeypatch.setattr(pyroll.pillar_model.Config,"PILLAR_TYPE", "UNIFORM")
+    monkeypatch.setattr(pyroll.pillar_model.Config,"PILLAR_COUNT", 30)
 
     in_profile = Profile.round(
         diameter=19.5e-3,

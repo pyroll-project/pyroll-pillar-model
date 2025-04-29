@@ -1,11 +1,7 @@
-import logging
-import webbrowser
 import numpy as np
 import pyroll.pillar_model
 
-from typing import Union
-from pyroll.pillar_model.profile import PillarProfile
-from pyroll.core import Profile, PassSequence, RollPass, Roll, FlatGroove
+from pyroll.core import Profile, RollPass, Roll, FlatGroove
 
 
 @RollPass.DiskElement.pillar_spreads
@@ -13,10 +9,9 @@ def pillar_spreads(self: RollPass.DiskElement):
     return self.pillar_draughts ** -0.5
 
 
-def test_pillar_longitudinal_angles_flat():
-    pyroll.pillar_model.Config.PILLAR_TYPE = "EQUIDISTANT"
-    DISK_ELEMENT_COUNT = 15
-    pyroll.pillar_model.Config.PILLAR_COUNT = 10
+def test_pillar_longitudinal_angles_flat(monkeypatch):
+    monkeypatch.setattr(pyroll.pillar_model.Config, "PILLAR_COUNT", 10)
+    monkeypatch.setattr(pyroll.pillar_model.Config, "PILLAR_TYPE", "EQUIDISTANT")
 
     in_profile = Profile.round(
         diameter=19.5e-3,
@@ -40,7 +35,7 @@ def test_pillar_longitudinal_angles_flat():
             neutral_point=-20e-3
         ),
         gap=10e-3,
-        disk_element_count=DISK_ELEMENT_COUNT
+        disk_element_count=15
     )
 
     rp.solve(in_profile)
