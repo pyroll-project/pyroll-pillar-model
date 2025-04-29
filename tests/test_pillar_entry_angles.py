@@ -1,18 +1,19 @@
 import numpy as np
 import pyroll.pillar_model
 
+from pyroll.core import Profile, RollPass, Roll, FlatGroove, root_hooks
 
-from pyroll.core import Profile, RollPass, Roll, FlatGroove
 
-@RollPass.DiskElement.pillar_spreads
 def pillar_spreads(self: RollPass.DiskElement):
     return self.pillar_draughts ** -0.5
 
 
-def test_pillar_longitudinal_angles_flat():
-    pyroll.pillar_model.Config.PILLAR_TYPE = "EQUIDISTANT"
-    DISK_ELEMENT_COUNT = 15
-    pyroll.pillar_model.Config.PILLAR_COUNT = 10
+def test_pillar_longitudinal_angles_flat(monkeypatch):
+    monkeypatch.setattr(pyroll.pillar_model.Config, "PILLAR_TYPE", "EQUIDISTANT")
+    monkeypatch.setattr(pyroll.pillar_model.Config, "PILLAR_COUNT", 30)
+
+    with RollPass.DiskElement.pillar_spreads(pillar_spreads):
+        root_hooks.add(RollPass.DiskElement.pillar_spreads)
 
     in_profile = Profile.round(
         diameter=19.5e-3,
@@ -35,10 +36,12 @@ def test_pillar_longitudinal_angles_flat():
             neutral_point=-20e-3
         ),
         gap=10e-3,
-        disk_element_count=DISK_ELEMENT_COUNT
+        disk_element_count=15
     )
 
     rp.solve(in_profile)
+
+    root_hooks.remove_last(RollPass.DiskElement.pillar_spreads)
 
     local_roll_radii = np.concatenate(
         [rp.roll.max_radius - rp.roll.surface_interpolation(0, center) for center in rp.in_profile.pillars],
