@@ -42,6 +42,9 @@ RollPass.mean_elongation = Hook[float]()
 RollPass.pillar_spread_correction_coefficients = Hook[np.ndarray]()
 """Array of correction coefficients for pillar spreads of a roll pass."""
 
+RollPass.pillar_corner_correction_strains = Hook[np.ndarray]()
+"""Strain of the pillars due to shearing while entering the roll gap."""
+
 pyroll.core.root_hooks.add(pyroll.core.RollPass.total_pillar_elongations)
 pyroll.core.root_hooks.add(pyroll.core.RollPass.total_pillar_spreads)
 pyroll.core.root_hooks.add(pyroll.core.RollPass.total_pillar_draughts)
