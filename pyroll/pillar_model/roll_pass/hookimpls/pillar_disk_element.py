@@ -101,7 +101,7 @@ def pillar_strain_rates(self: PillarDiskElement):
          self.in_profile.pillars],
         axis=0).flatten()
 
-    return self.roll_pass.velocity * self.pillar_strains / local_roll_radii
+    return self.pillar_velocities * self.pillar_strains / local_roll_radii
 
 
 @PillarDiskElement.OutProfile.pillar_widths
