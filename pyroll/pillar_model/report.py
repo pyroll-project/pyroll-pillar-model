@@ -164,14 +164,6 @@ def roll_pass_local_strain_strain_rate_over_width(unit: Unit):
         norm_strain_rate = mcolors.Normalize(vmin=min_strain_rates, vmax=max_strain_rates)
         cmap = plt.get_cmap("hsv")
 
-
-
-
-
-
-
-
-
         for de in rp.disk_elements:
             for i in range(len(de.in_profile.pillars)):
                 if not de.pillars_in_contact[i]:
