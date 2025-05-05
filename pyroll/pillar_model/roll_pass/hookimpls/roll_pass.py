@@ -50,8 +50,12 @@ def total_pillar_strains(self: RollPass):
 
 @RollPass.total_pillar_strain_rates
 def total_pillar_strain_rates(self: RollPass):
-    p_strain_rates = [de.pillar_strain_rates for de in self.disk_elements]
-    return np.sum(p_strain_rates, axis=0)
+    local_roll_radii = np.concatenate(
+        [self.roll.max_radius - self.roll.surface_interpolation(0, center) for center in
+         self.in_profile.pillars],
+        axis=0).flatten()
+
+    return self.velocity * self.total_pillar_strains / local_roll_radii
 
 
 @RollPass.DiskElement.contact_area

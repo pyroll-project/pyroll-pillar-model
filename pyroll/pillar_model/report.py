@@ -1,11 +1,14 @@
 import numpy as np
-import matplotlib.pyplot as plt
-import plotly.graph_objects as go
 import plotly.io as pio
+import plotly.graph_objects as go
+
+import matplotlib.pyplot as plt
+import matplotlib.colors as mcolors
+import matplotlib.animation as mpl_ani
+from matplotlib.cm import ScalarMappable
 
 from pyroll.core import Unit, RollPass
 from pyroll.report import hookimpl
-import matplotlib.animation as mpl_ani
 
 
 @hookimpl(specname="unit_plot")
@@ -102,7 +105,7 @@ def roll_pass_contact_area(unit: Unit):
 
 
 @hookimpl(specname="unit_plot")
-def roll_pass_strain_strain_rate_over_width(unit: Unit):
+def roll_pass_total_strain_strain_rate_over_width(unit: Unit):
     if isinstance(unit, RollPass) and unit.disk_elements:
         rp: RollPass = unit
 
@@ -112,18 +115,84 @@ def roll_pass_strain_strain_rate_over_width(unit: Unit):
         ax1, ax2 = fig.subplots(2, sharex="all")
         ax1.grid(True)
         ax2.grid(True)
-        ax1.set_title("Strain / Strain - Rate Distribution")
+        ax1.set_title("Total Strain / Strain - Rate Distribution")
         ax2.set_xlabel("$z$")
         ax1.set_ylabel("Strain ")
         ax2.set_ylabel("Strain rate")
 
-        strains = np.sum([de.pillar_strains for de in rp.disk_elements], axis=0)
-        strain_rates = np.sum([de.pillar_strain_rates for de in rp.disk_elements], axis=0)
-        ax1.plot(unit.in_profile.pillars, strains, color='C0')
-        ax1.plot(-unit.in_profile.pillars, strains, color='C0')
-        ax2.plot(unit.in_profile.pillars, strain_rates, color='C1')
-        ax2.plot(-unit.in_profile.pillars, strain_rates, color='C1')
+        ax1.plot(unit.in_profile.pillars, rp.total_pillar_strains, color='C0')
+        ax1.plot(-unit.in_profile.pillars, rp.total_pillar_strains, color='C0')
+        ax2.plot(unit.in_profile.pillars, rp.total_pillar_strain_rates, color='C1')
+        ax2.plot(-unit.in_profile.pillars, rp.total_pillar_strain_rates, color='C1')
         fig.subplots_adjust(hspace=0)
+
+        return fig
+
+
+@hookimpl(specname="unit_plot")
+def roll_pass_local_strain_strain_rate_over_width(unit: Unit):
+    if isinstance(unit, RollPass) and unit.disk_elements:
+        rp: RollPass = unit
+
+        fig: plt.Figure = plt.figure()
+        ax1: plt.Axes
+        ax2: plt.Axes
+        ax1, ax2 = fig.subplots(2, sharex="all")
+        ax1.grid(True)
+        ax2.grid(True)
+        ax1.invert_yaxis()
+        ax2.invert_yaxis()
+
+        ax1.set_title("Local Strain / Strain - Rate Distribution")
+        ax2.set_xlabel("$z$")
+        ax1.set_ylabel("Strain ")
+        ax2.set_ylabel("Strain rate")
+
+        p_strains = []
+        p_strain_rates = []
+        for de in rp.disk_elements:
+            p_strains.append(de.out_profile.pillar_strains)
+            p_strain_rates.append(de.pillar_strain_rates)
+
+        min_strain = np.min(p_strains)
+        max_strain = np.max(p_strains)
+
+        min_strain_rates = np.min(p_strain_rates)
+        max_strain_rates = np.max(p_strain_rates)
+
+        norm_strain = mcolors.Normalize(vmin=min_strain, vmax=max_strain)
+        norm_strain_rate = mcolors.Normalize(vmin=min_strain_rates, vmax=max_strain_rates)
+        cmap = plt.get_cmap("hsv")
+
+        for de in rp.disk_elements:
+            for i in range(len(de.in_profile.pillars)):
+                if not de.pillars_in_contact[i]:
+                    continue
+
+                strain = de.out_profile.pillar_strains[i]
+                color_strain = cmap(norm_strain(strain))
+                color_strain_rate = cmap(norm_strain(strain))
+
+                x = [de.in_profile.x] * 2 + [de.out_profile.x] * 2
+                z = np.array([
+                    de.in_profile.pillar_boundaries[i + 1],
+                    de.in_profile.pillar_boundaries[i],
+                    de.out_profile.pillar_boundaries[i],
+                    de.out_profile.pillar_boundaries[i + 1],
+                ])
+                ax1.fill(z, x, alpha=0.7, color=color_strain)
+                ax1.fill(-z, x, alpha=0.7, color=color_strain)
+
+                ax2.fill(z, x, alpha=0.7, color=color_strain_rate)
+                ax2.fill(-z, x, alpha=0.7, color=color_strain_rate)
+
+        sm_strain = ScalarMappable(cmap=cmap, norm=norm_strain)
+        sm_strain.set_array([])
+        cbar = plt.colorbar(sm_strain, ax=ax1, label="Strain")
+
+        sm_strain_rate = ScalarMappable(cmap=cmap, norm=norm_strain_rate)
+        sm_strain_rate.set_array([])
+        cbar = plt.colorbar(sm_strain_rate, ax=ax2, label="Strain Rate")
 
         return fig
 
@@ -217,4 +286,3 @@ def roll_pass_velocity_profile(unit: Unit):
         html_string = pio.to_html(fig, full_html=False, include_plotlyjs='cdn')
 
         return html_string
-

@@ -54,23 +54,32 @@ def test_pillar_strains_with_corner_correction(monkeypatch):
     sequence.solve(in_profile)
 
     p_strains = []
+    p_strain_rates = []
     for de in sequence[0].disk_elements:
         p_strains.append(de.out_profile.pillar_strains)
+        p_strain_rates.append(de.pillar_strain_rates)
 
     min_strain = np.min(p_strains)
     max_strain = np.max(p_strains)
 
-    norm = mcolors.Normalize(vmin=min_strain, vmax=max_strain)
+    min_strain_rates = np.min(p_strain_rates)
+    max_strain_rates = np.max(p_strain_rates)
+
+    norm_strain = mcolors.Normalize(vmin=min_strain, vmax=max_strain)
+    norm_strain_rate = mcolors.Normalize(vmin=min_strain_rates, vmax=max_strain_rates)
     cmap = plt.get_cmap("hsv")
 
-    fig: plt.Figure = plt.figure()
-    ax: plt.Axes = fig.add_subplot()
-    ax.set_aspect("equal")
-    ax.grid(True)
-    ax.set_title("Pillar Strains")
-    ax.set_xlabel("$z$")
-    ax.set_ylabel("$x$")
-    ax.invert_yaxis()
+    fig, axes = plt.subplots(1, 2, figsize=(12, 8))
+
+    axes[0].set_title("Pillar Strains")
+    axes[1].set_title("Pillar Strain Rates")
+
+    for ax in axes:
+        ax.set_aspect("equal")
+        ax.grid(True)
+        ax.set_xlabel("$z$")
+        ax.set_ylabel("$x$")
+        ax.invert_yaxis()
 
     for de in sequence[0].disk_elements:
         for i in range(len(de.in_profile.pillars)):
@@ -78,7 +87,8 @@ def test_pillar_strains_with_corner_correction(monkeypatch):
                 continue
 
             strain = de.out_profile.pillar_strains[i]
-            color = cmap(norm(strain))
+            color_strain = cmap(norm_strain(strain))
+            color_strain_rate = cmap(norm_strain(strain))
 
             x = [de.in_profile.x] * 2 + [de.out_profile.x] * 2
             z = np.array([
@@ -87,12 +97,19 @@ def test_pillar_strains_with_corner_correction(monkeypatch):
                 de.out_profile.pillar_boundaries[i],
                 de.out_profile.pillar_boundaries[i + 1],
             ])
-            ax.fill(z, x, alpha=0.7, color=color)
-            ax.fill(-z, x, alpha=0.7, color=color)
+            axes[0].fill(z, x, alpha=0.7, color=color_strain)
+            axes[0].fill(-z, x, alpha=0.7, color=color_strain)
 
-    sm = ScalarMappable(cmap=cmap, norm=norm)
-    sm.set_array([])
-    cbar = plt.colorbar(sm, ax=ax, label="Strains")
+            axes[1].fill(z, x, alpha=0.7, color=color_strain_rate)
+            axes[1].fill(-z, x, alpha=0.7, color=color_strain_rate)
+
+    sm_strain = ScalarMappable(cmap=cmap, norm=norm_strain)
+    sm_strain.set_array([])
+    cbar = plt.colorbar(sm_strain, ax=axes[0], label="Strain")
+
+    sm_strain_rate = ScalarMappable(cmap=cmap, norm=norm_strain_rate)
+    sm_strain_rate.set_array([])
+    cbar = plt.colorbar(sm_strain_rate, ax=axes[1], label="Strain Rate")
 
     fig.show()
 
@@ -142,23 +159,32 @@ def test_pillar_strains_without_corner_correction(monkeypatch):
     sequence.solve(in_profile)
 
     p_strains = []
+    p_strain_rates = []
     for de in sequence[0].disk_elements:
         p_strains.append(de.out_profile.pillar_strains)
+        p_strain_rates.append(de.pillar_strain_rates)
 
     min_strain = np.min(p_strains)
     max_strain = np.max(p_strains)
 
-    norm = mcolors.Normalize(vmin=min_strain, vmax=max_strain)
+    min_strain_rates = np.min(p_strain_rates)
+    max_strain_rates = np.max(p_strain_rates)
+
+    norm_strain = mcolors.Normalize(vmin=min_strain, vmax=max_strain)
+    norm_strain_rate = mcolors.Normalize(vmin=min_strain_rates, vmax=max_strain_rates)
     cmap = plt.get_cmap("hsv")
 
-    fig: plt.Figure = plt.figure()
-    ax: plt.Axes = fig.add_subplot()
-    ax.set_aspect("equal")
-    ax.grid(True)
-    ax.set_title("Pillar Strains")
-    ax.set_xlabel("$z$")
-    ax.set_ylabel("$x$")
-    ax.invert_yaxis()
+    fig, axes = plt.subplots(1, 2, figsize=(12, 8))
+
+    axes[0].set_title("Pillar Strains")
+    axes[1].set_title("Pillar Strain Rates")
+
+    for ax in axes:
+        ax.set_aspect("equal")
+        ax.grid(True)
+        ax.set_xlabel("$z$")
+        ax.set_ylabel("$x$")
+        ax.invert_yaxis()
 
     for de in sequence[0].disk_elements:
         for i in range(len(de.in_profile.pillars)):
@@ -166,7 +192,8 @@ def test_pillar_strains_without_corner_correction(monkeypatch):
                 continue
 
             strain = de.out_profile.pillar_strains[i]
-            color = cmap(norm(strain))
+            color_strain = cmap(norm_strain(strain))
+            color_strain_rate = cmap(norm_strain(strain))
 
             x = [de.in_profile.x] * 2 + [de.out_profile.x] * 2
             z = np.array([
@@ -175,12 +202,19 @@ def test_pillar_strains_without_corner_correction(monkeypatch):
                 de.out_profile.pillar_boundaries[i],
                 de.out_profile.pillar_boundaries[i + 1],
             ])
-            ax.fill(z, x, alpha=0.7, color=color)
-            ax.fill(-z, x, alpha=0.7, color=color)
+            axes[0].fill(z, x, alpha=0.7, color=color_strain)
+            axes[0].fill(-z, x, alpha=0.7, color=color_strain)
 
-    sm = ScalarMappable(cmap=cmap, norm=norm)
-    sm.set_array([])
-    cbar = plt.colorbar(sm, ax=ax, label="Strains")
+            axes[1].fill(z, x, alpha=0.7, color=color_strain_rate)
+            axes[1].fill(-z, x, alpha=0.7, color=color_strain_rate)
+
+    sm_strain = ScalarMappable(cmap=cmap, norm=norm_strain)
+    sm_strain.set_array([])
+    cbar = plt.colorbar(sm_strain, ax=axes[0], label="Strain")
+
+    sm_strain_rate = ScalarMappable(cmap=cmap, norm=norm_strain_rate)
+    sm_strain_rate.set_array([])
+    cbar = plt.colorbar(sm_strain_rate, ax=axes[1], label="Strain Rate")
 
     fig.show()
 
