@@ -113,8 +113,6 @@ def test_pillar_strains_with_corner_correction(monkeypatch):
 
     fig.show()
 
-    fig.show()
-
     root_hooks.remove_last(RollPass.DiskElement.pillar_spreads)
 
 

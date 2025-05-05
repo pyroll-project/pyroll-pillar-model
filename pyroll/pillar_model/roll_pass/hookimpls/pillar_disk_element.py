@@ -96,12 +96,12 @@ def pillar_strains(self: PillarDiskElement.OutProfile):
 
 @PillarDiskElement.pillar_strain_rates
 def pillar_strain_rates(self: PillarDiskElement):
-    local_roll_radii = np.concatenate(
-        [self.roll_pass.roll.max_radius - self.roll_pass.roll.surface_interpolation(0, center) for center in
-         self.in_profile.pillars],
-        axis=0).flatten()
+    p_strain_rates = np.zeros_like(self.in_profile.pillars)
+    for i, pillar in enumerate(self.in_profile.pillars):
+        if self.pillars_in_contact[i]:
+            p_strain_rates[i] = self.pillar_velocities[i] * self.pillar_strains[i] / self.length
 
-    return self.pillar_velocities * self.pillar_strains / local_roll_radii
+    return p_strain_rates
 
 
 @PillarDiskElement.OutProfile.pillar_widths
