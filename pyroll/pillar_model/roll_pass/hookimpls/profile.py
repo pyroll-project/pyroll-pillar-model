@@ -15,6 +15,17 @@ def rp_out_width(self: RollPass.OutProfile):
         return self.cross_section.width
 
 
+@RollPass.OutProfile.pillar_boundaries
+def rp_out_pillar_boundaries(self: RollPass.OutProfile):
+    if self.roll_pass.disk_elements:
+        return self.roll_pass.disk_elements[-1].out_profile.pillar_boundaries
+
+
+@RollPass.OutProfile.pillars
+def rp_out_pillars(self: RollPass.OutProfile):
+    if self.roll_pass.disk_elements:
+        return self.roll_pass.disk_elements[-1].out_profile.pillars
+
 @RollPass.InProfile.velocity
 def rp_in_velocity(self: RollPass.InProfile):
     try:
