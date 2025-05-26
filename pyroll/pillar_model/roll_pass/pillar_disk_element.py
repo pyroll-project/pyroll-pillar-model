@@ -49,6 +49,7 @@ pyroll.core.root_hooks.add(pyroll.core.RollPass.DiskElement.OutProfile.pillar_wi
 pyroll.core.root_hooks.add(pyroll.core.RollPass.DiskElement.OutProfile.pillar_areas)
 pyroll.core.root_hooks.add(pyroll.core.RollPass.DiskElement.OutProfile.pillar_strains)
 
+pyroll.core.root_hooks.add(pyroll.core.RollPass.OutProfile.pillars)
 pyroll.core.root_hooks.add(pyroll.core.Rotator.OutProfile.pillars)
 pyroll.core.root_hooks.add(pyroll.core.Rotator.OutProfile.pillar_heights)
 pyroll.core.root_hooks.add(pyroll.core.Rotator.OutProfile.pillar_widths)
