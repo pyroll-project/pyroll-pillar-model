@@ -4,7 +4,7 @@ from . import profile
 from . import roll_pass
 from pyroll.core import config as _config
 
-VERSION = "3.0.2"
+VERSION = "3.0.3"
 
 
 @_config("PYROLL_PILLAR_MODEL")
