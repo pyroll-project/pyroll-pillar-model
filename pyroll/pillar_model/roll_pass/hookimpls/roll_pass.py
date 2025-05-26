@@ -116,7 +116,7 @@ def pillar_spread_correction_coefficients(self: RollPass):
         return 1 / (RollPass.mean_elongation.get_result(self) * RollPass.total_pillar_draughts.get_result(
             self) * RollPass.total_pillar_spreads.get_result(self))
 
-    def calculate_coefficients(correction_coefficients, relaxation_factor=0.5):
+    def calculate_coefficients(correction_coefficients, relaxation_factor=0.05):
         return self.pillar_spread_correction_coefficients + (
                 self.pillar_spread_correction_coefficients * correction_coefficients - self.pillar_spread_correction_coefficients) * relaxation_factor / self.disk_element_count
 
